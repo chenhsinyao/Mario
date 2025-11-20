@@ -2332,10 +2332,12 @@ while running:
                     
                     # 設置所有音效音量為0
                     jump_sound.set_volume(0)
+                    long_jump_sound.set_volume(0)
                     coin_sound.set_volume(0)
                     powerup_sound.set_volume(0)
                     kick_sound.set_volume(0)
                     flagpole_sound.set_volume(0)
+                    stomp_sound.set_volume(0)
                     bump_sound.set_volume(0)
                     smash_sound.set_volume(0)
                     level_complete_sound.set_volume(0)
@@ -2344,6 +2346,9 @@ while running:
                     plus_live_sound.set_volume(0)
                     game_over_sound.set_volume(0)
                     appear_sound.set_volume(0)
+                    fireball_sound.set_volume(0)
+                    fireball_kick_sound.set_volume(0)
+                    pipe_sound.set_volume(0)
                     
                 else:
                     # 解除靜音 - 恢復背景音樂並將音效音量設為1
@@ -2361,10 +2366,12 @@ while running:
                     
                     # 恢復所有音效音量為1
                     jump_sound.set_volume(1)
+                    long_jump_sound.set_volume(1)
                     coin_sound.set_volume(1)
                     powerup_sound.set_volume(1)
                     kick_sound.set_volume(1)
                     flagpole_sound.set_volume(1)
+                    stomp_sound.set_volume(1)
                     bump_sound.set_volume(1)
                     smash_sound.set_volume(1)
                     level_complete_sound.set_volume(1)
@@ -2373,6 +2380,9 @@ while running:
                     plus_live_sound.set_volume(1)
                     game_over_sound.set_volume(1)
                     appear_sound.set_volume(1)
+                    fireball_sound.set_volume(1)
+                    fireball_kick_sound.set_volume(1)
+                    pipe_sound.set_volume(1)
             elif event.key == pygame.K_r:
                 # 重置遊戲
                 brick_particles.clear()
