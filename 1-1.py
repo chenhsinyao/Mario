@@ -19,86 +19,86 @@ FONT = "resources\\fonts\\super-mario-bros-nes.otf"
 
 # 馬力歐圖片陣列
 MARIO = [
-    pygame.image.load("resources\\graphics\\Mario_Big_Idle.png"),
-    pygame.image.load("resources\\graphics\\Mario_Big_Jump.png"),
-    pygame.image.load("resources\\graphics\\Mario_Big_Run1.png"),
-    pygame.image.load("resources\\graphics\\Mario_Big_Run2.png"),
-    pygame.image.load("resources\\graphics\\Mario_Big_Run3.png"),
-    pygame.image.load("resources\\graphics\\Mario_Big_Slide.png"),
-    pygame.image.load("resources\\graphics\\Mario_Small_Death.png"),
-    pygame.image.load("resources\\graphics\\Mario_Small_Idle.png"),
-    pygame.image.load("resources\\graphics\\Mario_Small_Jump.png"),
-    pygame.image.load("resources\\graphics\\Mario_Small_Run1.png"),
-    pygame.image.load("resources\\graphics\\Mario_Small_Run2.png"),
-    pygame.image.load("resources\\graphics\\Mario_Small_Run3.png"),
-    pygame.image.load("resources\\graphics\\Mario_Small_Slide.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Mario_Big_Idle.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Mario_Big_Jump.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Mario_Big_Run1.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Mario_Big_Run2.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Mario_Big_Run3.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Mario_Big_Slide.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Mario_Small_Death.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Mario_Small_Idle.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Mario_Small_Jump.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Mario_Small_Run1.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Mario_Small_Run2.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Mario_Small_Run3.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Mario_Small_Slide.png"),
 ]
 
 # 烏龜圖片陣列
 KOOPA = [
-    pygame.image.load("resources\\graphics\\Koopa_Walk1.png"),
-    pygame.image.load("resources\\graphics\\Koopa_Walk2.png"),
-    pygame.image.load("resources\\graphics\\Koopa_Shell.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Koopa_Walk1.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Koopa_Walk2.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Koopa_Shell.png"),
 ]
 
 BLOCK = [
-    pygame.image.load("resources\\graphics\\GroundBlock.png"),
-    pygame.image.load("resources\\graphics\\HardBlock.png"),
-    pygame.image.load("resources\\graphics\\MysteryBlock.png"),
-    pygame.image.load("resources\\graphics\\EmptyBlock.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\GroundBlock.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\HardBlock.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\MysteryBlock.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\EmptyBlock.png"),
 ]
 
 BRICK = [
-    pygame.image.load("resources\\graphics\\Brick.png")
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Brick.png")
 ]
 
 COIN = [
-    pygame.image.load("resources\\graphics\\Coin.png")
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Coin.png")
 ]
 
 MASHROOM = [
-    pygame.image.load("resources\\graphics\\MagicMushroom.png"),
-    pygame.image.load("resources\\graphics\\1upMushroom.png")
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\MagicMushroom.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\1upMushroom.png")
 ]
 
 STAR = [
-    pygame.image.load("resources\\graphics\\Starman.png")
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Starman.png")
 ]
 
 GOOMBA = [
-    pygame.image.load("resources\\graphics\\Goomba_Walk1.png"),
-    pygame.image.load("resources\\graphics\\Goomba_Flat.png")
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Goomba_Walk1.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Goomba_Flat.png")
 ]
 
 PIPE = [
-    pygame.image.load("resources\\graphics\\PipeBottom.png"),
-    pygame.image.load("resources\\graphics\\PipeTop.png")
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\PipeBottom.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\PipeTop.png")
 ]
 
 FLAG = [
-    pygame.image.load("resources\\graphics\\FlagPole.png"),
-    pygame.image.load("resources\\graphics\\Flag.png")
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\FlagPole.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Flag.png")
 ]
 
 CASTLE = [
-    pygame.image.load("resources\\graphics\\Castle.png")
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Castle.png")
 ]
 
 CLOUD = [
-    pygame.image.load("resources\\graphics\\Cloud1.png"),
-    pygame.image.load("resources\\graphics\\Cloud2.png"),
-    pygame.image.load("resources\\graphics\\Cloud3.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Cloud1.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Cloud2.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Cloud3.png"),
 ]
 
 BUSH = [
-    pygame.image.load("resources\\graphics\\Bush1.png"),
-    pygame.image.load("resources\\graphics\\Bush2.png"),
-    pygame.image.load("resources\\graphics\\Bush3.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Bush1.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Bush2.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Bush3.png"),
 ]
 
 HILL = [
-    pygame.image.load("resources\\graphics\\Hill1.png"),
-    pygame.image.load("resources\\graphics\\Hill2.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Hill1.png"),
+    pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Hill2.png"),
 ]
 
 # 顏色定義
@@ -125,6 +125,7 @@ game_time = 400
 time_counter = 0
 game_won = False
 game_paused = False
+game_muted = False
 live = 3
 checkpoint_x = 0
 checkpoint_activated = False
@@ -134,21 +135,22 @@ invincible_star_timer = 0
 growing_timer = 0
 score_popups = []
 respawn_timer = 0
-calculating_score = False  # 新增：是否正在計算分數
-score_calculation_timer = 0  # 新增：分數計算計時器
-target_points = 0  # 新增：目標分數
-start_points = 0  # 新增：起始分數
-start_coins = 0  # 新增：起始金幣
-start_time = 0  # 新增：起始時間
-death_sound_playing = False  # 新增：死亡音效是否正在播放
-death_sound_timer = 0  # 新增：死亡音效計時器
+calculating_score = False  # 是否正在計算分數
+score_calculation_timer = 0  # 分數計算計時器
+target_points = 0  # 目標分數
+start_points = 0  # 起始分數
+start_coins = 0  # 起始金幣
+start_time = 0  # 起始時間
+death_sound_playing = False  # 死亡音效是否正在播放
+death_sound_timer = 0  # 死亡音效計時器
 walking_to_castle = False
-star_music_playing = False  # 新增:星星音樂是否正在播放
-hurry_sound_played = False  # 新增：時間緊急音效是否已播放過
-hurry_sound_end_timer = 0  # 新增：時間緊急音效結束計時器
-game_sound_channel = None  # 新增：背景音樂頻道
-hurry_sound_channel = None  # 新增：緊急音效頻道
-star_sound_channel = None  # 新增：星星音樂頻道
+star_music_playing = False  # 星星音樂是否正在播放
+game_over_sound_played = False  # Game Over音效是否已播放
+hurry_sound_played = False  # 時間緊急音效是否已播放過
+hurry_sound_end_timer = 0  # 時間緊急音效結束計時器
+game_sound_channel = None  # 背景音樂頻道
+hurry_sound_channel = None  # 緊急音效頻道
+star_sound_channel = None  # 星星音樂頻道
 
 # 關卡地圖
 level_map = [
@@ -164,28 +166,34 @@ level_map = [
     "                Q   B$BQB                                                    B$B              2     B3    Q  Q  Q     B          BB      H  H          HH  H            BBQB            HHHHHH        L   C        ",
     "                                              P           P                                                                             HH  HH        HHH  HH                          HHHHHHH        L            ",
     "                                      P       P           P                                                                            HHH  HHH      HHHH  HHH                        HHHHHHHH        L            ",
-    "  M                   E     P         P E     P    E E    P                       A              E E       K      E  E      E E E E   HHHH  HHHH    HHHHH  HHHH     P         E E  P HHHHHHHHH        H            ",
+    "   M                  E     P         P E     P    E E    P                       A              E E       K      E  E      E E E E   HHHH  HHHH    HHHHH  HHHH     P         E E  P HHHHHHHHH        H            ",
     "=====================================================================  ===============   ================================================================  ========================================================",
     "=====================================================================  ===============   ================================================================  ========================================================",
 ]
 
 # 音效載入
-game_sound = pygame.mixer.Sound("resources\\sounds\\Myinstants\\game_sound.mp3") # 遊戲背景音樂
-hurry_sound = pygame.mixer.Sound("resources\\sounds\\smb_warning.wav") # 時間緊急音樂
-jump_sound = pygame.mixer.Sound("resources\\sounds\\smb_jump-small.wav")
-coin_sound = pygame.mixer.Sound("resources\\sounds\\smb_coin.wav")
-powerup_sound = pygame.mixer.Sound("resources\\sounds\\smb_powerup.wav")
-kick_sound = pygame.mixer.Sound("resources\\sounds\\smb_kick.wav")
-flag_sound = pygame.mixer.Sound("resources\\sounds\\smb_flagpole.wav")
-bump_sound = pygame.mixer.Sound("resources\\sounds\\smb_bump.wav")
-smash_sound = pygame.mixer.Sound("resources\\sounds\\smb_breakblock.wav")
+game_sound = pygame.mixer.Sound("resources\\sounds\\Myinstants\\game_sound.mp3")
+hurry_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\smb_warning.wav")
+jump_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\smb_jump-small.wav")
+long_jump_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\smb_jump-super.wav")
+coin_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\smb_coin.wav")
+powerup_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\smb_powerup.wav")
+kick_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\smb_kick.wav")
+flagpole_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\smb_flagpole.wav")
+stomp_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\smb_stomp.wav")
+bump_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\smb_bump.wav")
+smash_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\smb_breakblock.wav")
 star_sound = pygame.mixer.Sound("resources\\sounds\\Myinstants\\Star.mp3")
-level_complete_sound = pygame.mixer.Sound("resources\\sounds\\smb_stage_clear.wav")
-death_sound = pygame.mixer.Sound("resources\\sounds\\smb_mariodie.wav")
-pause_sound = pygame.mixer.Sound("resources\\sounds\\smb_pause.wav")
-plus_live_sound = pygame.mixer.Sound("resources\\sounds\\smb_1-up.wav")
-game_over_sound = pygame.mixer.Sound("resources\\sounds\\smb_gameover.wav")
-appear_sound = pygame.mixer.Sound("resources\\sounds\\smb_powerup_appears.wav")
+level_complete_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\smb_stage_clear.wav")
+death_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\smb_mariodie.wav")
+pause_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\smb_pause.wav")
+plus_live_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\smb_1-up.wav")
+game_over_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\smb_gameover.wav")
+appear_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\smb_powerup_appears.wav")
+fireball_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\smb_fireball.wav")
+fireball_kick_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\smb_fireworks.wav")
+pipe_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\smb_pipe.wav")
+
 
 # 分數彈出類
 class ScorePopup:
@@ -221,6 +229,12 @@ class Player(pygame.sprite.Sprite):
         self.max_speed = 5
         self.acceleration = self.max_speed / 120
         self.deceleration = self.max_speed / 120
+        self.mushroom_speed_ratio = 0.4
+        self.star_speed_ratio = 0.6
+        self.enemy_speed_ratio = 0.25
+        self.koopa_speed_ratio = 0.25
+        self.shell_speed_ratio = 1.75
+        self.castle_walk_ratio = 0.25
         self.jumping = False
         self.on_ground = False
         self.min_x = 0
@@ -321,13 +335,13 @@ class Player(pygame.sprite.Sprite):
     
     def grow(self):
         global growing_timer, points
-        if not self.is_big:
-            self.is_big = True
-            growing_timer = FPS
-            self.update_size()
-            points += 1000
-            add_score_popup(self.rect.x, self.rect.y, 1000)
-            powerup_sound.play()
+        # if not self.is_big:
+        self.is_big = True
+        growing_timer = FPS
+        self.update_size()
+        points += 1000
+        add_score_popup(self.rect.x, self.rect.y, 1000)
+        powerup_sound.play()
     
     def die(self):
         """被敵人殺死"""
@@ -355,6 +369,7 @@ class Player(pygame.sprite.Sprite):
             self.update_size()
             self.invincible = True
             self.invincible_timer = 120
+            pipe_sound.play()
         
     def update(self):
         global game_won, game_over, reset_timer, growing_timer, camera_x, checkpoint_x, checkpoint_activated, initial_player_x, initial_player_y, live, respawn_timer, calculating_score, score_calculation_timer, target_points, start_points, start_coins, start_time, points, death_sound_playing, death_sound_timer, death_sound, game_sound_channel, star_sound_channel, hurry_sound_channel
@@ -506,7 +521,7 @@ class Player(pygame.sprite.Sprite):
                 if not hasattr(self, 'level_complete_played'):
                     level_complete_sound.play()
                 
-                self.vel_x = self.max_speed / 4
+                self.vel_x = self.max_speed * self.castle_walk_ratio
                 self.facing_right = True
                 self.vel_y = 0
                 self.rect.x += self.vel_x
@@ -633,7 +648,9 @@ class Player(pygame.sprite.Sprite):
                     if self.is_big and not brick.is_breaking:
                         brick.break_brick()
                         smash_sound.play()
-        
+                    else:
+                        stomp_sound.play()
+                        
         for secret_brick in secret_bricks:
             if self.rect.colliderect(secret_brick.rect):
                 # 生命菇磚塊（隱藏狀態）只能從下方碰撞
@@ -713,11 +730,11 @@ class Player(pygame.sprite.Sprite):
                     game_sound_channel.stop()
                 if star_sound_channel:
                     star_sound_channel.stop()
-                # 新增：停止hurry_sound
+                # 停止hurry_sound
                 if hurry_sound_channel:
                     hurry_sound_channel.stop()
                 
-                flag_sound.play()
+                flagpole_sound.play()
                 
                 for flag_img in flag_images:
                     flag_img.start_descending(self.rect.y)
@@ -787,7 +804,10 @@ class Brick(pygame.sprite.Sprite):
             
             if enemy.rect.colliderect(check_rect):
                 if hasattr(enemy, 'die_from_shell'):
+                    global points
                     enemy.die_from_shell()
+                    points += 100
+                    add_score_popup(self.rect.x, self.rect.y, 100)
         
     def bump(self):
         if not self.is_bumping and not self.is_breaking:
@@ -837,7 +857,7 @@ class SecretBrick(pygame.sprite.Sprite):
         self.hit_count = 0
         self.max_hits = 5 if brick_type == 2 else 1
         self.is_empty = False  # 是否已經空了
-        self.is_visible = False  # 新增：是否可見（生命菇磚塊初始不可見）
+        self.is_visible = False  # 是否可見（生命菇磚塊初始不可見）
         
         # 生命菇磚塊初始不可見，其他類型可見
         if brick_type == 1:
@@ -867,7 +887,10 @@ class SecretBrick(pygame.sprite.Sprite):
             
             if enemy.rect.colliderect(check_rect):
                 if hasattr(enemy, 'die_from_shell'):
+                    global points
                     enemy.die_from_shell()
+                    points += 100
+                    add_score_popup(self.rect.x, self.rect.y, 100)
         
     def bump(self):
         global coins_collected, points
@@ -907,7 +930,7 @@ class SecretBrick(pygame.sprite.Sprite):
             coin_sound.play()
             coins_collected += 1
             points += 200
-            bump_sound.play()
+            stomp_sound.play()
             # 五次後變成空磚塊
             if self.hit_count >= 5:
                 self.is_empty = True
@@ -997,7 +1020,10 @@ class QuestionBlock(pygame.sprite.Sprite):
             
             if enemy.rect.colliderect(check_rect):
                 if hasattr(enemy, 'die_from_shell'):
+                    global points
                     enemy.die_from_shell()
+                    points += 100
+                    add_score_popup(self.rect.x, self.rect.y, 100)
         
     def hit(self):
         if self.hit_count == 0:
@@ -1075,12 +1101,12 @@ class Mushroom(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.vel_x = 2
+        self.vel_x = player.max_speed * player.mushroom_speed_ratio
         self.vel_y = 0
         self.rising = True
         self.rise_timer = FPS
         self.start_y = y
-        self.z_order = -1  # 新增：上升時在磚塊後面
+        self.z_order = -1  # 上升時在磚塊後面
         
     def update(self):
         if self.rising:
@@ -1089,7 +1115,7 @@ class Mushroom(pygame.sprite.Sprite):
             self.rect.y = self.start_y - (GRID_SIZE // 2) * progress
             if self.rise_timer <= 0:
                 self.rising = False
-                self.z_order = 1  # 新增：上升完成後移到磚塊前面
+                self.z_order = 1  # 上升完成後移到磚塊前面
             return
         
         if self.vel_x < 0:
@@ -1176,12 +1202,12 @@ class OneUpMushroom(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.vel_x = 2
+        self.vel_x = player.max_speed * player.mushroom_speed_ratio
         self.vel_y = 0
         self.rising = True
         self.rise_timer = FPS
         self.start_y = y
-        self.z_order = -1  # 新增：上升時在磚塊後面
+        self.z_order = -1  # 上升時在磚塊後面
         
     def update(self):
         if self.rising:
@@ -1190,7 +1216,7 @@ class OneUpMushroom(pygame.sprite.Sprite):
             self.rect.y = self.start_y - (GRID_SIZE // 2) * progress
             if self.rise_timer <= 0:
                 self.rising = False
-                self.z_order = 1  # 新增：上升完成後移到磚塊前面
+                self.z_order = 1  # 上升完成後移到磚塊前面
             return
         
         if self.vel_x < 0:
@@ -1264,7 +1290,7 @@ class OneUpMushroom(pygame.sprite.Sprite):
                 self.vel_x *= -1
 
         if self.rect.colliderect(player.rect):
-            global live, points
+            global live
             live += 1
             plus_live_sound.play()
             self.kill()
@@ -1279,13 +1305,13 @@ class Star(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.vel_x = 3
+        self.vel_x = player.max_speed * player.star_speed_ratio
         self.vel_y = 0
         self.rising = True
         self.rise_timer = FPS
         self.start_y = y
         self.bounce_power = -12
-        self.z_order = -1  # 新增：上升時在磚塊後面
+        self.z_order = -1  # 上升時在磚塊後面
         
     def update(self):
         if self.rising:
@@ -1294,7 +1320,7 @@ class Star(pygame.sprite.Sprite):
             self.rect.y = self.start_y - (GRID_SIZE // 2) * progress
             if self.rise_timer <= 0:
                 self.rising = False
-                self.z_order = 1  # 新增：上升完成後移到磚塊前面
+                self.z_order = 1  # 上升完成後移到磚塊前面
             return
         
         self.vel_y += 0.8
@@ -1367,7 +1393,7 @@ class Star(pygame.sprite.Sprite):
                     self.vel_x *= -1
         
         if self.rect.colliderect(player.rect):
-            global invincible_star_timer, points, star_music_playing, game_sound_channel, star_sound_channel
+            global invincible_star_timer, star_music_playing, game_sound_channel, star_sound_channel
             invincible_star_timer = FPS * 6
             
             # 停止背景音樂，播放星星音樂
@@ -1392,7 +1418,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.y = grid_y * GRID_SIZE
         self.start_x = grid_x * GRID_SIZE
         self.start_y = grid_y * GRID_SIZE
-        self.vel_x = -2
+        self.vel_x = -player.max_speed * player.enemy_speed_ratio
         self.vel_y = 0
         self.is_squashed = False
         self.squash_timer = 0
@@ -1402,13 +1428,10 @@ class Enemy(pygame.sprite.Sprite):
         self.is_flipped = False
         
     def die_from_shell(self):
-        global points
         self.is_dying = True
         self.vel_x = 0
         self.vel_y = -10
         self.death_rotation = 0
-        points += 100
-        add_score_popup(self.rect.x, self.rect.y, 100)
         
     def die_from_star(self):
         global points
@@ -1440,7 +1463,7 @@ class Enemy(pygame.sprite.Sprite):
     def reset(self):
         self.rect.x = self.start_x
         self.rect.y = self.start_y
-        self.vel_x = -2
+        self.vel_x = -player.max_speed * player.enemy_speed_ratio
         self.vel_y = 0
         self.is_squashed = False
         self.squash_timer = 0
@@ -1588,9 +1611,9 @@ class Koopa(pygame.sprite.Sprite):
         self.rect.bottom = (grid_y + 1) * GRID_SIZE  # 使用bottom來定位，確保底部在正確位置
         self.start_x = self.rect.x
         self.start_y = self.rect.y
-        self.vel_x = -2
+        self.vel_x = -player.max_speed * player.koopa_speed_ratio
         self.vel_y = 0
-        self.spin_speed = 8
+        self.spin_speed = player.max_speed * player.shell_speed_ratio
         self.animation_frame = 0
         self.walk_frame_duration = FPS // 3
         self.is_dying = False
@@ -1622,22 +1645,19 @@ class Koopa(pygame.sprite.Sprite):
             kick_sound.play()
     
     def kick(self, from_left):
-        global points
         if self.state == 'shell' and self.vel_x == 0:
             self.state = 'shell_moving'
             if from_left:
                 self.vel_x = self.spin_speed
             else:
                 self.vel_x = -self.spin_speed
-            points += 100
-            add_score_popup(self.rect.x, self.rect.y, 100)
             kick_sound.play()
     
     def reset(self):
         self.state = 'walking'
         self.rect.x = self.start_x
         self.rect.y = self.start_y
-        self.vel_x = -2
+        self.vel_x = -player.max_speed * player.koopa_speed_ratio
         self.vel_y = 0
         self.image = self.walk_images[0]
         self.rect = self.image.get_rect()
@@ -1692,6 +1712,8 @@ class Koopa(pygame.sprite.Sprite):
                             self.vel_x *= -1
                             enemy.vel_x *= -1
                     elif hasattr(enemy, 'squash'):
+                        if not enemy.is_dying == True:
+                            kick_sound.play()
                         enemy.die_from_shell()
                         
         for platform in platforms:
@@ -1760,6 +1782,13 @@ class Koopa(pygame.sprite.Sprite):
                             else:
                                 other_enemy.rect.left = self.rect.right
                             other_enemy.vel_x *= -1
+        # 移動中的龜殼超出視窗左右5格時消失
+        if self.state == 'shell_moving':
+            left_boundary = camera_x - 5 * GRID_SIZE
+            right_boundary = camera_x + SCREEN_WIDTH + 5 * GRID_SIZE
+            
+            if self.rect.right < left_boundary or self.rect.left > right_boundary:
+                self.kill()
 
 class Pipe(pygame.sprite.Sprite):
     def __init__(self, grid_x, grid_y, grid_height):
@@ -1872,7 +1901,7 @@ class Checkpoint(pygame.sprite.Sprite):
 
 def respawn_player():
     """復活馬力歐並重置敵人和磚塊"""
-    global camera_x, respawn_timer
+    global camera_x, respawn_timer, star_music_playing, game_sound_channel
     
     # 復活馬力歐
     player.is_dead = False
@@ -1975,11 +2004,13 @@ def respawn_player():
     
     respawn_timer = 0
     
-    # 新增：復活後重新播放背景音樂
-    global star_music_playing, game_sound_channel
+    # 復活後重新播放背景音樂
     star_music_playing = False
-    game_sound_channel = game_sound.play(-1)
-    current_music = 'normal'
+    if not game_muted:  # 只有在非靜音狀態下才播放
+        game_sound_channel = game_sound.play(-1)
+    else:
+        game_sound_channel = game_sound.play(-1)
+        game_sound_channel.pause()  # 立即暫停
 
 def load_level(level_map):
     global player, initial_player_x, initial_player_y, brick_init_data, enemy_init_data
@@ -2173,7 +2204,7 @@ def draw_hud():
     screen.blit(live_count_text, (690, 50))
     
     small_font = pygame.font.Font(FONT, 8)
-    controls_text = small_font.render("Arrow Keys: Move | Space/Up: Jump | P: Pause | R: Restart", True, WHITE)
+    controls_text = small_font.render("Arrow Keys: Move | Space/Up: Jump | P: Pause | M: Mute | R: Restart", True, WHITE)
     screen.blit(controls_text, (10, SCREEN_HEIGHT - 30))
 
 def draw_win_screen():
@@ -2203,8 +2234,8 @@ def draw_game_over_screen():
     overlay.fill(BLACK)
     screen.blit(overlay, (0, 0))
     
-    font_large = pygame.font.Font(None, 72)
-    font_medium = pygame.font.Font(None, 48)
+    font_large = pygame.font.Font(FONT, 36)
+    font_medium = pygame.font.Font(FONT, 24)
     
     game_over_text = font_large.render("GAME OVER", True, RED)
     game_over_rect = game_over_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3))
@@ -2283,9 +2314,65 @@ while running:
                         star_sound_channel.unpause()
                     elif game_sound_channel:
                         game_sound_channel.unpause()
-                    # 新增：恢復hurry_sound（如果它正在播放中）
+                    # 恢復hurry_sound（如果它正在播放中）
                     if hurry_sound_channel and 'hurry_sound_end_timer' in locals() and hurry_sound_end_timer > 0:
                         hurry_sound_channel.unpause()
+            elif event.key == pygame.K_m:
+                if not game_muted:
+                    # 靜音 - 暫停所有背景音樂並將音效音量設為0
+                    game_muted = True
+                    
+                    # 暫停背景音樂
+                    if game_sound_channel:
+                        game_sound_channel.pause()
+                    if star_sound_channel:
+                        star_sound_channel.pause()
+                    if hurry_sound_channel:
+                        hurry_sound_channel.pause()
+                    
+                    # 設置所有音效音量為0
+                    jump_sound.set_volume(0)
+                    coin_sound.set_volume(0)
+                    powerup_sound.set_volume(0)
+                    kick_sound.set_volume(0)
+                    flagpole_sound.set_volume(0)
+                    bump_sound.set_volume(0)
+                    smash_sound.set_volume(0)
+                    level_complete_sound.set_volume(0)
+                    death_sound.set_volume(0)
+                    pause_sound.set_volume(0)
+                    plus_live_sound.set_volume(0)
+                    game_over_sound.set_volume(0)
+                    appear_sound.set_volume(0)
+                    
+                else:
+                    # 解除靜音 - 恢復背景音樂並將音效音量設為1
+                    game_muted = False
+                    
+                    # 恢復背景音樂
+                    if star_music_playing and star_sound_channel:
+                        star_sound_channel.unpause()
+                    elif game_sound_channel:
+                        game_sound_channel.unpause()
+                    
+                    # 恢復hurry_sound（如果它正在播放中）
+                    if hurry_sound_channel and 'hurry_sound_end_timer' in locals() and hurry_sound_end_timer > 0:
+                        hurry_sound_channel.unpause()
+                    
+                    # 恢復所有音效音量為1
+                    jump_sound.set_volume(1)
+                    coin_sound.set_volume(1)
+                    powerup_sound.set_volume(1)
+                    kick_sound.set_volume(1)
+                    flagpole_sound.set_volume(1)
+                    bump_sound.set_volume(1)
+                    smash_sound.set_volume(1)
+                    level_complete_sound.set_volume(1)
+                    death_sound.set_volume(1)
+                    pause_sound.set_volume(1)
+                    plus_live_sound.set_volume(1)
+                    game_over_sound.set_volume(1)
+                    appear_sound.set_volume(1)
             elif event.key == pygame.K_r:
                 # 重置遊戲
                 brick_particles.clear()
@@ -2312,6 +2399,7 @@ while running:
                 invincible_star_timer = 0
                 calculating_score = False
                 death_sound_playing = False
+                game_over_sound_played = False
                 
                 # 停止所有音效
                 if star_sound_channel:
@@ -2320,13 +2408,17 @@ while running:
                     hurry_sound_channel.stop()
                 if game_sound_channel:
                     game_sound_channel.stop()
+                game_over_sound.stop()
+                level_complete_sound.stop()
+                death_sound.stop()
+                kick_sound.stop()
                 
-                # 重置hurry_sound計時器（如果存在）
-                if 'hurry_sound_end_timer' in locals():
-                    del hurry_sound_end_timer
-                
-                # 重新播放背景音樂
-                game_sound_channel = game_sound.play(-1)
+                # 重新播放背景音樂（要檢查是否靜音）
+                if not game_muted:  # 只有在非靜音狀態下才播放
+                    game_sound_channel = game_sound.play(-1)
+                else:
+                    game_sound_channel = game_sound.play(-1)
+                    game_sound_channel.pause()  # 立即暫停
                 current_music = 'normal'
     
     if game_over:
@@ -2345,9 +2437,14 @@ while running:
         draw_hud()
         draw_game_over_screen()
         
+        # 播放一次 Game Over 音效
+        if not game_over_sound_played:
+            game_over_sound.play()
+            game_over_sound_played = True
+        
         pygame.display.flip()
         continue
-    
+        
     elif calculating_score:
         # 等待進入城堡
         if walking_to_castle is True:
@@ -2357,8 +2454,8 @@ while running:
             score_calculation_timer += 1
             
             # 計算金幣和時間各需要的時間
-            coins_duration = (start_coins / 50) * FPS if start_coins > 0 else 0
-            time_duration = (start_time / 200) * FPS if start_time > 0 else 0
+            coins_duration = (start_coins / 25) * FPS if start_coins > 0 else 0
+            time_duration = (start_time / 100) * FPS if start_time > 0 else 0
             total_frames = coins_duration + time_duration  # 依序計算
             
             if total_frames == 0 or score_calculation_timer >= total_frames:
@@ -2369,7 +2466,10 @@ while running:
                 calculating_score = False
                 game_won = True
             else:
-                # 先處理金幣(每50個金幣1秒)
+                # 每10幀播放一次coin_sound
+                # if score_calculation_timer % 10 == 0:
+                #     coin_sound.play()
+                # 先處理金幣(每25個金幣1秒)
                 if score_calculation_timer <= coins_duration:
                     coins_progress = score_calculation_timer / coins_duration if coins_duration > 0 else 1
                     coins_collected = int(start_coins * (1 - coins_progress))
@@ -2377,7 +2477,7 @@ while running:
                     coins_points = converted_coins * 100
                     time_points = 0
                     game_time = start_time
-                # 再處理時間(每200秒1秒)
+                # 再處理時間(每100秒1秒)
                 else:
                     coins_collected = 0
                     coins_points = start_coins * 100
