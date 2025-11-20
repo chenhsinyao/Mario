@@ -32,6 +32,11 @@ MARIO = [
     pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Mario_Small_Run2.png"),
     pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Mario_Small_Run3.png"),
     pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Mario_Small_Slide.png"),
+    pygame.image.load("resources\\graphics\\Mario Universe.com\\Fire Mario1.png"),# stop
+    pygame.image.load("resources\\graphics\\Mario Universe.com\\Fire Mario2.png"),# run1
+    pygame.image.load("resources\\graphics\\Mario Universe.com\\Fire Mario3.png"),# run2
+    pygame.image.load("resources\\graphics\\Mario Universe.com\\Fire Mario4.png"),# jump
+    pygame.image.load("resources\\graphics\\Mario Universe.com\\Fire Mario5.png"),# slide
 ]
 
 # 烏龜圖片陣列
@@ -63,6 +68,14 @@ MASHROOM = [
 
 STAR = [
     pygame.image.load("resources\\graphics\\unity-super-mario-tutorial\\Starman.png")
+]
+
+SUNFLOWER = [
+    pygame.image.load("resources\\graphics\\the Mario encyclopedia\\Fire_Flower_SMB.gif") # https://www.mariowiki.com/List_of_power-ups
+]
+
+FIREBALL = [
+    pygame.image.load("resources\\graphics\\the Mario encyclopedia\\Fireball_red_MB_NES_sprite.webp")
 ]
 
 GOOMBA = [
@@ -127,6 +140,8 @@ game_won = False
 game_paused = False
 game_muted = False
 live = 3
+is_fire_mario = False
+fireballs = pygame.sprite.Group()
 checkpoint_x = 0
 checkpoint_activated = False
 initial_player_x = 0
@@ -193,7 +208,6 @@ appear_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\smb_
 fireball_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\smb_fireball.wav")
 fireball_kick_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\smb_fireworks.wav")
 pipe_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\smb_pipe.wav")
-
 
 # 分數彈出類
 class ScorePopup:
@@ -264,7 +278,10 @@ class Player(pygame.sprite.Sprite):
         old_bottom = self.rect.bottom if hasattr(self, 'rect') else None
         old_x = self.rect.x if hasattr(self, 'rect') else None
         
-        if self.is_big:
+        global is_fire_mario
+        if is_fire_mario:
+            self.base_image = pygame.transform.scale(MARIO[13].copy(), (GRID_SIZE, GRID_SIZE * 2))
+        elif self.is_big:
             self.base_image = pygame.transform.scale(MARIO[0].copy(), (GRID_SIZE, GRID_SIZE * 2))
         else:
             self.base_image = pygame.transform.scale(MARIO[7].copy(), (GRID_SIZE, GRID_SIZE))
@@ -276,14 +293,20 @@ class Player(pygame.sprite.Sprite):
             self.rect.x = old_x
     
     def get_current_image(self):
+        global is_fire_mario
+        
         if self.is_dead:
             return 6
         
         if self.on_flag or self.waiting_for_flag:
-            return 0 if self.is_big else 7
+            return 13 if is_fire_mario else (0 if self.is_big else 7)
         
         if self.walking_to_castle:
-            if self.is_big:
+            if is_fire_mario:
+                run_frames = [14, 15, 13]
+                frame_index = (self.animation_frame // self.run_frame_duration) % 3
+                return run_frames[frame_index]
+            elif self.is_big:
                 run_frames = [2, 3, 4]
                 frame_index = (self.animation_frame // self.run_frame_duration) % 3
                 return run_frames[frame_index]
@@ -292,7 +315,18 @@ class Player(pygame.sprite.Sprite):
                 frame_index = (self.animation_frame // self.run_frame_duration) % 3
                 return run_frames[frame_index]
         
-        if self.is_big:
+        if is_fire_mario:
+            if not self.on_ground:
+                return 16
+            elif self.vel_x == 0:
+                return 13
+            elif (self.vel_x > 0 and not self.facing_right) or (self.vel_x < 0 and self.facing_right):
+                return 17
+            else:
+                run_frames = [14, 15, 13]
+                frame_index = (self.animation_frame // self.run_frame_duration) % 3
+                return run_frames[frame_index]
+        elif self.is_big:
             if not self.on_ground:
                 return 1
             elif self.vel_x == 0:
@@ -316,9 +350,12 @@ class Player(pygame.sprite.Sprite):
                 return run_frames[frame_index]
     
     def update_image_direction(self):
+        global is_fire_mario
         img_index = self.get_current_image()
         
-        if self.is_big:
+        if is_fire_mario:
+            base_img = pygame.transform.scale(MARIO[img_index].copy(), (GRID_SIZE, GRID_SIZE * 2))
+        elif self.is_big:
             base_img = pygame.transform.scale(MARIO[img_index].copy(), (GRID_SIZE, GRID_SIZE * 2))
         else:
             base_img = pygame.transform.scale(MARIO[img_index].copy(), (GRID_SIZE, GRID_SIZE))
@@ -335,13 +372,14 @@ class Player(pygame.sprite.Sprite):
     
     def grow(self):
         global growing_timer, points
-        # if not self.is_big:
-        self.is_big = True
-        growing_timer = FPS
-        self.update_size()
-        points += 1000
-        add_score_popup(self.rect.x, self.rect.y, 1000)
-        powerup_sound.play()
+        if not self.is_big:
+            self.is_big = True
+            growing_timer = FPS
+            self.update_size()  
+            points += 1000
+            add_score_popup(self.rect.x, self.rect.y, 1000)
+            powerup_sound.play()
+
     
     def die(self):
         """被敵人殺死"""
@@ -364,13 +402,36 @@ class Player(pygame.sprite.Sprite):
                 self.update_image_direction()
     
     def shrink(self):
-        if self.is_big:
+        global is_fire_mario
+        if is_fire_mario:
+            is_fire_mario = False
             self.is_big = False
             self.update_size()
             self.invincible = True
             self.invincible_timer = 120
             pipe_sound.play()
+        elif self.is_big:
+            self.is_big = False
+            self.update_size()
+            self.invincible = True
+            self.invincible_timer = 120
+            pipe_sound.play()
+
+    def shoot_fireball(self):
+        global is_fire_mario
+        if not is_fire_mario or self.is_dead or self.on_flag or self.waiting_for_flag or self.walking_to_castle:
+            return
         
+        if len(fireballs) >= 2:
+            return
+        
+        fireball_x = self.rect.right if self.facing_right else self.rect.left - GRID_SIZE // 2
+        fireball_y = self.rect.centery
+        fireball = Fireball(fireball_x, fireball_y, self.facing_right)
+        fireballs.add(fireball)
+        all_sprites.add(fireball)
+        fireball_sound.play()
+
     def update(self):
         global game_won, game_over, reset_timer, growing_timer, camera_x, checkpoint_x, checkpoint_activated, initial_player_x, initial_player_y, live, respawn_timer, calculating_score, score_calculation_timer, target_points, start_points, start_coins, start_time, points, death_sound_playing, death_sound_timer, death_sound, game_sound_channel, star_sound_channel, hurry_sound_channel
         # 長大特效
@@ -1037,6 +1098,10 @@ class QuestionBlock(pygame.sprite.Sprite):
                 all_sprites.add(mushroom)
                 powerups.add(mushroom)
                 appear_sound.play()
+
+            elif self.item_type == 'sunflower':
+                appear_sound.play()
+                
             else:
                 global coins_collected
                 coin = Coin(self.rect.x, self.rect.y - GRID_SIZE)
@@ -1095,7 +1160,12 @@ class Coin(pygame.sprite.Sprite):
 class Mushroom(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        self.base_image = MASHROOM[0]
+        if not player.is_big:
+            self.base_image = MASHROOM[0]
+            self.is_mushroom = True
+        else:
+            self.base_image = SUNFLOWER[0]
+            self.is_mushroom = False
         self.base_image = pygame.transform.scale(self.base_image, (GRID_SIZE, GRID_SIZE))
         self.image = self.base_image.copy()
         self.rect = self.image.get_rect()
@@ -1118,17 +1188,18 @@ class Mushroom(pygame.sprite.Sprite):
                 self.z_order = 1  # 上升完成後移到磚塊前面
             return
         
-        if self.vel_x < 0:
-            self.image = pygame.transform.flip(self.base_image, True, False)
-        else:
-            self.image = self.base_image.copy()
-        
-        self.vel_y += 0.8
-        if self.vel_y > 15:
-            self.vel_y = 15
+        if self.is_mushroom:
+            if self.vel_x < 0:
+                self.image = pygame.transform.flip(self.base_image, True, False)
+            else:
+                self.image = self.base_image.copy()
             
-        self.rect.x += self.vel_x
-        self.rect.y += self.vel_y
+            self.vel_y += 0.8
+            if self.vel_y > 15:
+                self.vel_y = 15
+                
+            self.rect.x += self.vel_x
+            self.rect.y += self.vel_y
         
         for platform in platforms:
             if self.rect.colliderect(platform.rect):
@@ -1189,7 +1260,120 @@ class Mushroom(pygame.sprite.Sprite):
                 self.vel_x *= -1
 
         if self.rect.colliderect(player.rect):
-            player.grow()
+            global is_fire_mario, points
+            if not player.is_big:
+                player.grow()
+            else:
+                is_fire_mario = True
+                player.update_size()
+                points += 1000
+                add_score_popup(self.rect.x, self.rect.y, 1000)
+                powerup_sound.play()
+            self.kill()
+
+class Fireball(pygame.sprite.Sprite):
+    def __init__(self, x, y, facing_right):
+        super().__init__()
+        self.base_image = FIREBALL[0]
+        self.base_image = pygame.transform.scale(self.base_image, (GRID_SIZE // 2, GRID_SIZE // 2))
+        self.image = self.base_image.copy()
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.vel_x = 8 if facing_right else -8
+        self.vel_y = 0
+        self.start_x = x
+        self.gravity = 0.8
+        self.bounce_power = -8
+        
+    def update(self):
+        self.vel_y += self.gravity
+        if self.vel_y > 15:
+            self.vel_y = 15
+        
+        self.rect.x += self.vel_x
+        self.rect.y += self.vel_y
+        
+        if abs(self.rect.x - self.start_x) > 15 * GRID_SIZE:
+            self.kill()
+            return
+        
+        for platform in platforms:
+            if self.rect.colliderect(platform.rect):
+                if self.vel_y > 0:
+                    self.rect.bottom = platform.rect.top
+                    self.vel_y = self.bounce_power
+        
+        for stair in stairs:
+            if self.rect.colliderect(stair.rect):
+                if self.vel_y > 0:
+                    self.rect.bottom = stair.rect.top
+                    self.vel_y = self.bounce_power
+                else:
+                    self.kill()
+                    return
+        
+        for brick in bricks:
+            if self.rect.colliderect(brick.rect):
+                if self.vel_y > 0:
+                    self.rect.bottom = brick.rect.top
+                    self.vel_y = self.bounce_power
+                else:
+                    self.kill()
+                    return
+        
+        for qblock in question_blocks:
+            if self.rect.colliderect(qblock.rect):
+                if self.vel_y > 0:
+                    self.rect.bottom = qblock.rect.top
+                    self.vel_y = self.bounce_power
+                else:
+                    self.kill()
+                    return
+        
+        for secret_brick in secret_bricks:
+            if secret_brick.is_visible and self.rect.colliderect(secret_brick.rect):
+                if self.vel_y > 0:
+                    self.rect.bottom = secret_brick.rect.top
+                    self.vel_y = self.bounce_power
+                else:
+                    self.kill()
+                    return
+        
+        for pipe in pipes:
+            if self.rect.colliderect(pipe.rect):
+                self.kill()
+                return
+        
+        for pipe_top in pipe_tops:
+            if self.rect.colliderect(pipe_top.rect):
+                self.kill()
+                return
+        
+        for enemy in enemies:
+            if hasattr(enemy, 'is_squashed') and enemy.is_squashed:
+                continue
+            if hasattr(enemy, 'is_dying') and enemy.is_dying:
+                continue
+            
+            if self.rect.colliderect(enemy.rect):
+                global points
+
+                if isinstance(enemy, Koopa):
+                    if enemy.state == 'shell_moving':
+                        enemy.state = 'shell'
+                        enemy.vel_x = 0
+                    enemy.die_from_star()
+                else:
+                    enemy.die_from_star()
+                
+                points += 100
+                add_score_popup(enemy.rect.x, enemy.rect.y, 100)
+                fireball_kick_sound.play()
+                self.kill()
+                return
+        
+        if self.rect.top > SCREEN_HEIGHT:
             self.kill()
 
 # 生命菇類
@@ -1901,12 +2085,13 @@ class Checkpoint(pygame.sprite.Sprite):
 
 def respawn_player():
     """復活馬力歐並重置敵人和磚塊"""
-    global camera_x, respawn_timer, star_music_playing, game_sound_channel
+    global camera_x, respawn_timer, star_music_playing, game_sound_channel, is_fire_mario
     
     # 復活馬力歐
     player.is_dead = False
     player.death_jump_done = False
     player.is_big = False
+    is_fire_mario = False
     player.update_size()
     player.visible = True
     player.facing_right = True
@@ -2031,6 +2216,7 @@ def load_level(level_map):
     castles.empty()
     clouds.empty()
     checkpoints.empty()
+    fireballs.empty()
     
     brick_data = []
     enemy_data = []
@@ -2273,6 +2459,7 @@ flag_images = pygame.sprite.Group()
 castles = pygame.sprite.Group()
 clouds = pygame.sprite.Group()
 checkpoints = pygame.sprite.Group()
+fireballs = pygame.sprite.Group()
 
 brick_init_data, enemy_init_data, platform_init_data, GRID_WIDTH, enemy_spawn_list = load_level(level_map)
 
@@ -2386,10 +2573,17 @@ while running:
                     fireball_sound.set_volume(1)
                     fireball_kick_sound.set_volume(1)
                     pipe_sound.set_volume(1)
+            elif event.key == pygame.K_LCTRL or event.key == pygame.K_RCTRL:
+                if not game_over and not game_won and not game_paused:
+                    player.shoot_fireball()
             elif event.key == pygame.K_r:
                 # 重置遊戲
                 brick_particles.clear()
                 score_popups.clear()
+                
+                for fireball in list(fireballs):
+                    fireball.kill()
+        
                 brick_init_data, enemy_init_data, platform_init_data, GRID_WIDTH, enemy_spawn_list = load_level(level_map)
                 game_over = False
                 game_won = False
@@ -2413,6 +2607,7 @@ while running:
                 calculating_score = False
                 death_sound_playing = False
                 game_over_sound_played = False
+                is_fire_mario = False
                 
                 # 停止所有音效
                 if star_sound_channel:
