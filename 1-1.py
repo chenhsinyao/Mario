@@ -2306,17 +2306,20 @@ while running:
                         star_sound_channel.pause()
                     if hurry_sound_channel:
                         hurry_sound_channel.pause()
-                    pause_sound.play()
+                    if not game_muted:
+                        pause_sound.play()
                 else:
                     # 解除暫停
                     game_paused = False
-                    if star_music_playing and star_sound_channel:
-                        star_sound_channel.unpause()
-                    elif game_sound_channel:
-                        game_sound_channel.unpause()
-                    # 恢復hurry_sound（如果它正在播放中）
-                    if hurry_sound_channel and 'hurry_sound_end_timer' in locals() and hurry_sound_end_timer > 0:
-                        hurry_sound_channel.unpause()
+
+                    if not game_muted:
+                        if star_music_playing and star_sound_channel:
+                            star_sound_channel.unpause()
+                        elif game_sound_channel:
+                            game_sound_channel.unpause()
+                        # 恢復hurry_sound（如果它正在播放中）
+                        if hurry_sound_channel and 'hurry_sound_end_timer' in locals() and hurry_sound_end_timer > 0:
+                            hurry_sound_channel.unpause()
             elif event.key == pygame.K_m:
                 if not game_muted:
                     # 靜音 - 暫停所有背景音樂並將音效音量設為0
