@@ -35,8 +35,11 @@ MARIO = [
     pygame.image.load("resources\\graphics\\Mario Universe.com\\Fire Mario1.png"),# stop
     pygame.image.load("resources\\graphics\\Mario Universe.com\\Fire Mario2.png"),# run1
     pygame.image.load("resources\\graphics\\Mario Universe.com\\Fire Mario3.png"),# run2
-    pygame.image.load("resources\\graphics\\Mario Universe.com\\Fire Mario4.png"),# jump
-    pygame.image.load("resources\\graphics\\Mario Universe.com\\Fire Mario5.png"),# slide
+    pygame.image.load("resources\\graphics\\Mario Universe.com\\Fire Mario4.png"),# run3
+    pygame.image.load("resources\\graphics\\Mario Universe.com\\Fire Mario5.png"),# jump
+    pygame.image.load("resources\\graphics\\Mario Universe.com\\Fire Mario6.png"),# slide
+    pygame.image.load("resources\\graphics\\Mario Universe.com\\Fire Mario7.png"),
+    pygame.image.load("resources\\graphics\\Mario Universe.com\\Big Mario1.png"),
 ]
 
 # 烏龜圖片陣列
@@ -71,11 +74,11 @@ STAR = [
 ]
 
 SUNFLOWER = [
-    pygame.image.load("resources\\graphics\\the Mario encyclopedia\\Fire_Flower_SMB.gif") # https://www.mariowiki.com/List_of_power-ups
+    pygame.image.load("resources\\graphics\\the Mario encyclopedia\\SMB_Sprite_Fire_Flower.png") # https://www.mariowiki.com/List_of_power-ups
 ]
 
 FIREBALL = [
-    pygame.image.load("resources\\graphics\\the Mario encyclopedia\\Fireball_red_MB_NES_sprite.webp")
+    pygame.image.load("resources\\graphics\\Icon Archive\\Ph03nyx-Super-Mario-Retro-Fire-Ball.256.png")
 ]
 
 GOOMBA = [
@@ -147,7 +150,10 @@ checkpoint_activated = False
 initial_player_x = 0
 initial_player_y = 0
 invincible_star_timer = 0
-growing_timer = 0
+growing_timer = 0 # 小馬力歐變大馬力歐計時器
+transforming_timer = 0  # 大馬力歐變火焰馬力歐計時器
+shrinking_timer = 0  # 火焰馬力歐變小馬力歐計時器
+big_to_small_timer = 0  # 大馬力歐變小馬力歐計時器
 score_popups = []
 respawn_timer = 0
 calculating_score = False  # 是否正在計算分數
@@ -206,10 +212,9 @@ plus_live_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\s
 game_over_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\smb_gameover.wav")
 appear_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\smb_powerup_appears.wav")
 fireball_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\smb_fireball.wav")
-fireball_kick_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\smb_fireworks.wav")
+firework_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\smb_fireworks.wav")
 pipe_sound = pygame.mixer.Sound("resources\\sounds\\The Mushroom Kingdom\\smb_pipe.wav")
 
-# 分數彈出類
 class ScorePopup:
     def __init__(self, x, y, score):
         self.x = x
@@ -269,6 +274,9 @@ class Player(pygame.sprite.Sprite):
         self.animation_frame = 0
         self.animation_timer = 0
         self.run_frame_duration = FPS // 3
+        self.is_crouching = False
+        self.shooting_timer = 0
+        self.hit_wall = False
         
         self.update_size()
         self.rect.x = grid_x * GRID_SIZE
@@ -298,12 +306,18 @@ class Player(pygame.sprite.Sprite):
         if self.is_dead:
             return 6
         
+        if self.is_crouching and self.on_ground:
+            if is_fire_mario:
+                return 19
+            elif self.is_big:
+                return 20
+        
         if self.on_flag or self.waiting_for_flag:
-            return 13 if is_fire_mario else (0 if self.is_big else 7)
+            return 14 if is_fire_mario else (2 if self.is_big else 9)
         
         if self.walking_to_castle:
             if is_fire_mario:
-                run_frames = [14, 15, 13]
+                run_frames = [14, 15, 16]
                 frame_index = (self.animation_frame // self.run_frame_duration) % 3
                 return run_frames[frame_index]
             elif self.is_big:
@@ -317,13 +331,13 @@ class Player(pygame.sprite.Sprite):
         
         if is_fire_mario:
             if not self.on_ground:
-                return 16
+                return 17
             elif self.vel_x == 0:
                 return 13
             elif (self.vel_x > 0 and not self.facing_right) or (self.vel_x < 0 and self.facing_right):
-                return 17
+                return 18
             else:
-                run_frames = [14, 15, 13]
+                run_frames = [14, 15, 16]
                 frame_index = (self.animation_frame // self.run_frame_duration) % 3
                 return run_frames[frame_index]
         elif self.is_big:
@@ -348,28 +362,7 @@ class Player(pygame.sprite.Sprite):
                 run_frames = [9, 10, 11]
                 frame_index = (self.animation_frame // self.run_frame_duration) % 3
                 return run_frames[frame_index]
-    
-    def update_image_direction(self):
-        global is_fire_mario
-        img_index = self.get_current_image()
-        
-        if is_fire_mario:
-            base_img = pygame.transform.scale(MARIO[img_index].copy(), (GRID_SIZE, GRID_SIZE * 2))
-        elif self.is_big:
-            base_img = pygame.transform.scale(MARIO[img_index].copy(), (GRID_SIZE, GRID_SIZE * 2))
-        else:
-            base_img = pygame.transform.scale(MARIO[img_index].copy(), (GRID_SIZE, GRID_SIZE))
-        
-        if self.facing_right:
-            self.image = base_img
-        else:
-            self.image = pygame.transform.flip(base_img, True, False)
-        
-        if self.vel_x != 0 and self.on_ground:
-            self.animation_frame += 1
-        else:
-            self.animation_frame = 0
-    
+
     def grow(self):
         global growing_timer, points
         if not self.is_big:
@@ -380,7 +373,6 @@ class Player(pygame.sprite.Sprite):
             add_score_popup(self.rect.x, self.rect.y, 1000)
             powerup_sound.play()
 
-    
     def die(self):
         """被敵人殺死"""
         global live, respawn_timer, game_over, death_sound_playing, death_sound_timer, death_sound, game_sound_channel, star_sound_channel, hurry_sound_channel
@@ -402,17 +394,14 @@ class Player(pygame.sprite.Sprite):
                 self.update_image_direction()
     
     def shrink(self):
-        global is_fire_mario
+        global is_fire_mario, shrinking_timer, big_to_small_timer
         if is_fire_mario:
-            is_fire_mario = False
-            self.is_big = False
-            self.update_size()
+            shrinking_timer = FPS
             self.invincible = True
             self.invincible_timer = 120
             pipe_sound.play()
         elif self.is_big:
-            self.is_big = False
-            self.update_size()
+            big_to_small_timer = FPS
             self.invincible = True
             self.invincible_timer = 120
             pipe_sound.play()
@@ -422,27 +411,84 @@ class Player(pygame.sprite.Sprite):
         if not is_fire_mario or self.is_dead or self.on_flag or self.waiting_for_flag or self.walking_to_castle:
             return
         
-        if len(fireballs) >= 2:
+        if len(fireballs) >= 4:
             return
         
-        fireball_x = self.rect.right if self.facing_right else self.rect.left - GRID_SIZE // 2
+        fireball_x = self.rect.right - GRID_SIZE // 4 if self.facing_right else self.rect.left - GRID_SIZE // 8
         fireball_y = self.rect.centery
         fireball = Fireball(fireball_x, fireball_y, self.facing_right)
         fireballs.add(fireball)
         all_sprites.add(fireball)
         fireball_sound.play()
+        
+        self.shooting_timer = FPS // 4  # 顯示射擊圖片15幀
 
     def update(self):
-        global game_won, game_over, reset_timer, growing_timer, camera_x, checkpoint_x, checkpoint_activated, initial_player_x, initial_player_y, live, respawn_timer, calculating_score, score_calculation_timer, target_points, start_points, start_coins, start_time, points, death_sound_playing, death_sound_timer, death_sound, game_sound_channel, star_sound_channel, hurry_sound_channel
-        # 長大特效
+        global game_won, game_over, reset_timer, growing_timer, transforming_timer, shrinking_timer, big_to_small_timer, camera_x, checkpoint_x, checkpoint_activated, initial_player_x, initial_player_y, live, respawn_timer, calculating_score, score_calculation_timer, target_points, start_points, start_coins, start_time, points, death_sound_playing, death_sound_timer, death_sound, game_sound_channel, star_sound_channel, hurry_sound_channel, is_fire_mario
+        
+        # 遞減射擊計時器
+        if self.shooting_timer > 0:
+            self.shooting_timer -= 1
+        
+        # 長大特效 (小馬力歐變大馬力歐)
         if growing_timer > 0:
             growing_timer -= 1
             if growing_timer % 10 == 0:
                 self.is_big = not self.is_big
                 self.update_size()
+                self.update_image_direction()
             if growing_timer == 0:
                 self.is_big = True
                 self.update_size()
+                self.update_image_direction()
+            return False
+        
+        # 變身特效 (大馬力歐變火焰馬力歐)
+        if transforming_timer > 0:
+            transforming_timer -= 1
+            if transforming_timer % 10 == 0:
+                # 切換顯示大馬力歐和火焰馬力歐
+                is_fire_mario = not is_fire_mario
+                self.update_size()
+                self.update_image_direction()
+            if transforming_timer == 0:
+                is_fire_mario = True
+                self.update_size()
+                self.update_image_direction()
+            return False
+        
+        # 縮小特效 (火焰馬力歐變小馬力歐)
+        if shrinking_timer > 0:
+            shrinking_timer -= 1
+            if shrinking_timer % 10 == 0:
+                # 切換顯示火焰馬力歐和小馬力歐
+                if is_fire_mario:
+                    is_fire_mario = False
+                    self.is_big = False
+                else:
+                    is_fire_mario = True
+                    self.is_big = False
+                self.update_size()
+                self.update_image_direction()
+            if shrinking_timer == 0:
+                is_fire_mario = False
+                self.is_big = False
+                self.update_size()
+                self.update_image_direction()
+            return False
+        
+        # 縮小特效 (大馬力歐變小馬力歐)
+        if big_to_small_timer > 0:
+            big_to_small_timer -= 1
+            if big_to_small_timer % 10 == 0:
+                # 切換顯示大馬力歐和小馬力歐
+                self.is_big = not self.is_big
+                self.update_size()
+                self.update_image_direction()
+            if big_to_small_timer == 0:
+                self.is_big = False
+                self.update_size()
+                self.update_image_direction()
             return False
         
         # 先檢測是否掉洞（在死亡動畫之前）
@@ -501,8 +547,6 @@ class Player(pygame.sprite.Sprite):
             
             return False
         
-        self.update_image_direction()
-        
         if self.invincible:
             self.invincible_timer -= 1
             self.blink_timer += 1
@@ -534,7 +578,7 @@ class Player(pygame.sprite.Sprite):
                         self.castle_walk_stage = -2
                         self.pause_timer = FPS // 2
                         
-                        img_index = 0 if self.is_big else 7
+                        img_index = 13 if is_fire_mario else (0 if self.is_big else 7)
                         if self.is_big:
                             base_img = pygame.transform.scale(MARIO[img_index].copy(), (GRID_SIZE, GRID_SIZE * 2))
                         else:
@@ -556,7 +600,7 @@ class Player(pygame.sprite.Sprite):
                     self.rect.x += GRID_SIZE
                     
                     self.facing_right = False
-                    img_index = 0 if self.is_big else 7
+                    img_index = 13 if is_fire_mario else (0 if self.is_big else 7)
                     if self.is_big:
                         base_img = pygame.transform.scale(MARIO[img_index].copy(), (GRID_SIZE, GRID_SIZE * 2))
                     else:
@@ -627,11 +671,15 @@ class Player(pygame.sprite.Sprite):
                 self.vel_y = 0
                 self.rect.x += self.vel_x
                 
+                self.animation_frame += 1
+                
                 for platform in platforms:
                     if self.rect.colliderect(platform.rect):
                         if self.vel_y > 0 or self.rect.bottom > platform.rect.top:
                             self.rect.bottom = platform.rect.top
                             self.vel_y = 0
+                
+                self.update_image_direction()
                 
                 if self.rect.centerx >= self.castle_target_x:
                     self.visible = False
@@ -656,15 +704,23 @@ class Player(pygame.sprite.Sprite):
             if self.rect.colliderect(stair.rect):
                 if self.vel_x > 0:
                     self.rect.right = stair.rect.left
+                    self.vel_x = 0
+                    self.hit_wall = True
                 elif self.vel_x < 0:
                     self.rect.left = stair.rect.right
+                    self.vel_x = 0
+                    self.hit_wall = True
         
         for platform in platforms:
             if self.rect.colliderect(platform.rect):
                 if self.vel_x > 0:
                     self.rect.right = platform.rect.left
+                    self.vel_x = 0
+                    self.hit_wall = True
                 elif self.vel_x < 0:
                     self.rect.left = platform.rect.right
+                    self.vel_x = 0
+                    self.hit_wall = True
         
         self.rect.y += self.vel_y
         
@@ -763,8 +819,12 @@ class Player(pygame.sprite.Sprite):
                     self.on_ground = True
                 elif self.vel_x > 0 and self.rect.right - pipe.rect.left < 20:
                     self.rect.right = pipe.rect.left
+                    self.vel_x = 0
+                    self.hit_wall = True
                 elif self.vel_x < 0 and pipe.rect.right - self.rect.left < 20:
                     self.rect.left = pipe.rect.right
+                    self.vel_x = 0
+                    self.hit_wall = True
         
         for pipe_top in pipe_tops:
             if self.rect.colliderect(pipe_top.rect):
@@ -804,8 +864,59 @@ class Player(pygame.sprite.Sprite):
         
         if self.rect.left < self.min_x:
             self.rect.left = self.min_x
+            if self.vel_x < 0:
+                self.vel_x = 0
+                self.hit_wall = True
+        
+        self.update_image_direction()
         
         return False
+
+    def update_image_direction(self):
+        global is_fire_mario
+        img_index = self.get_current_image()
+        
+        old_bottom = self.rect.bottom
+        old_x = self.rect.x
+        
+        if self.shooting_timer > 0 and is_fire_mario:
+            base_img = pygame.transform.scale(MARIO[14].copy(), (GRID_SIZE, GRID_SIZE * 2))
+            if self.facing_right:
+                self.image = base_img
+            else:
+                self.image = pygame.transform.flip(base_img, True, False)
+            
+            self.rect = self.image.get_rect()
+            self.rect.bottom = old_bottom
+            self.rect.x = old_x
+            return
+    
+        if self.is_crouching and self.on_ground:
+            if is_fire_mario or self.is_big:
+                base_img = pygame.transform.scale(MARIO[img_index].copy(), (GRID_SIZE, GRID_SIZE * 1.25))
+            else:
+                base_img = pygame.transform.scale(MARIO[img_index].copy(), (GRID_SIZE, GRID_SIZE * 2))
+        else:
+            if is_fire_mario:
+                base_img = pygame.transform.scale(MARIO[img_index].copy(), (GRID_SIZE, GRID_SIZE * 2))
+            elif self.is_big:
+                base_img = pygame.transform.scale(MARIO[img_index].copy(), (GRID_SIZE, GRID_SIZE * 2))
+            else:
+                base_img = pygame.transform.scale(MARIO[img_index].copy(), (GRID_SIZE, GRID_SIZE))
+        
+        if self.facing_right:
+            self.image = base_img
+        else:
+            self.image = pygame.transform.flip(base_img, True, False)
+        
+        self.rect = self.image.get_rect()
+        self.rect.bottom = old_bottom
+        self.rect.x = old_x
+    
+        if self.vel_x != 0 and self.on_ground:
+            self.animation_frame += 1
+        else:
+            self.animation_frame = 0
     
     def jump(self):
         if self.on_flag or self.waiting_for_flag:
@@ -908,7 +1019,6 @@ class Brick(pygame.sprite.Sprite):
                 self.is_bumping = False
                 self.rect.y = self.original_y
 
-# 秘密磚塊類
 class SecretBrick(pygame.sprite.Sprite):
     def __init__(self, grid_x, grid_y, brick_type):
         super().__init__()
@@ -1224,23 +1334,24 @@ class Mushroom(pygame.sprite.Sprite):
                 if self.vel_y > 0 and self.rect.bottom - brick.rect.top < 20:
                     self.rect.bottom = brick.rect.top
                     self.vel_y = 0
-                else:
-                    if self.vel_x > 0:
-                        self.rect.right = brick.rect.left
-                    else:
-                        self.rect.left = brick.rect.right
+                elif self.vel_x > 0:
+                    self.rect.right = brick.rect.left
                     self.vel_x *= -1
+                else:
+                    self.rect.left = brick.rect.right
+                    self.vel_x *= -1
+                    
         
         for qblock in question_blocks:
             if self.rect.colliderect(qblock.rect):
                 if self.vel_y > 0 and self.rect.bottom - qblock.rect.top < 20:
                     self.rect.bottom = qblock.rect.top
                     self.vel_y = 0
+                elif self.vel_x > 0:
+                    self.rect.right = qblock.rect.left
+                    self.vel_x *= -1
                 else:
-                    if self.vel_x > 0:
-                        self.rect.right = qblock.rect.left
-                    else:
-                        self.rect.left = qblock.rect.right
+                    self.rect.left = qblock.rect.right
                     self.vel_x *= -1
         
         for secret_brick in secret_bricks:
@@ -1260,12 +1371,12 @@ class Mushroom(pygame.sprite.Sprite):
                 self.vel_x *= -1
 
         if self.rect.colliderect(player.rect):
-            global is_fire_mario, points
+            global is_fire_mario, transforming_timer, points
             if not player.is_big:
                 player.grow()
             else:
-                is_fire_mario = True
-                player.update_size()
+                is_fire_mario = False
+                transforming_timer = FPS
                 points += 1000
                 add_score_popup(self.rect.x, self.rect.y, 1000)
                 powerup_sound.play()
@@ -1282,7 +1393,7 @@ class Fireball(pygame.sprite.Sprite):
         self.rect.y = y
         self.vel_x = 8 if facing_right else -8
         self.vel_y = 0
-        self.start_x = x
+        # self.start_x = x
         self.gravity = 0.8
         self.bounce_power = -8
         
@@ -1294,19 +1405,22 @@ class Fireball(pygame.sprite.Sprite):
         self.rect.x += self.vel_x
         self.rect.y += self.vel_y
         
-        if abs(self.rect.x - self.start_x) > 15 * GRID_SIZE:
-            self.kill()
-            return
+        # if abs(self.rect.x - self.start_x) > 15 * GRID_SIZE:
+        #     self.kill()
+        #     return
         
         for platform in platforms:
             if self.rect.colliderect(platform.rect):
                 if self.vel_y > 0:
                     self.rect.bottom = platform.rect.top
                     self.vel_y = self.bounce_power
+                else:
+                    self.kill()
+                    return
         
         for stair in stairs:
             if self.rect.colliderect(stair.rect):
-                if self.vel_y > 0:
+                if self.vel_y > 0 and self.rect.bottom - stair.rect.top < 20:
                     self.rect.bottom = stair.rect.top
                     self.vel_y = self.bounce_power
                 else:
@@ -1347,8 +1461,12 @@ class Fireball(pygame.sprite.Sprite):
         
         for pipe_top in pipe_tops:
             if self.rect.colliderect(pipe_top.rect):
-                self.kill()
-                return
+                if self.vel_y > 0:
+                    self.rect.bottom = pipe_top.rect.top
+                    self.vel_y = self.bounce_power
+                else:
+                    self.kill()
+                    return
         
         for enemy in enemies:
             if hasattr(enemy, 'is_squashed') and enemy.is_squashed:
@@ -1369,14 +1487,13 @@ class Fireball(pygame.sprite.Sprite):
                 
                 points += 100
                 add_score_popup(enemy.rect.x, enemy.rect.y, 100)
-                fireball_kick_sound.play()
+                kick_sound.play()
                 self.kill()
                 return
         
         if self.rect.top > SCREEN_HEIGHT:
             self.kill()
 
-# 生命菇類
 class OneUpMushroom(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
@@ -1479,7 +1596,6 @@ class OneUpMushroom(pygame.sprite.Sprite):
             plus_live_sound.play()
             self.kill()
 
-# 無敵星星類
 class Star(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
@@ -1577,13 +1693,19 @@ class Star(pygame.sprite.Sprite):
                     self.vel_x *= -1
         
         if self.rect.colliderect(player.rect):
-            global invincible_star_timer, star_music_playing, game_sound_channel, star_sound_channel
-            invincible_star_timer = FPS * 6
+            global invincible_star_timer, star_music_playing, game_sound_channel, star_sound_channel, game_muted
+            invincible_star_timer = FPS * 10
             
             # 停止背景音樂，播放星星音樂
             if game_sound_channel:
                 game_sound_channel.pause()  # 暫停背景音樂
-            star_sound_channel = star_sound.play(-1)  # 循環播放
+            
+            # 只有在非靜音狀態下才播放星星音樂
+            if not game_muted:
+                star_sound_channel = star_sound.play(-1)  # 循環播放
+            else:
+                star_sound_channel = star_sound.play(-1)
+                star_sound_channel.pause()  # 立即暫停
             star_music_playing = True
             
             self.kill()
@@ -1790,7 +1912,6 @@ class Koopa(pygame.sprite.Sprite):
         
         self.image = self.walk_images[0]
         self.rect = self.image.get_rect()
-        # 修正烏龜生成位置：烏龜有1.5格高，需要將位置往上移0.5格
         self.rect.x = grid_x * GRID_SIZE
         self.rect.bottom = (grid_y + 1) * GRID_SIZE  # 使用bottom來定位，確保底部在正確位置
         self.start_x = self.rect.x
@@ -1854,10 +1975,7 @@ class Koopa(pygame.sprite.Sprite):
             self.rect.y += self.vel_y
             self.death_rotation += 6
             
-            if self.state == 'walking':
-                original_img = self.walk_images[0]
-            else:
-                original_img = self.shell_image
+            original_img = self.shell_image
             
             rotation = min(self.death_rotation, 180)
             self.image = pygame.transform.rotate(original_img, rotation)
@@ -1967,12 +2085,12 @@ class Koopa(pygame.sprite.Sprite):
                                 other_enemy.rect.left = self.rect.right
                             other_enemy.vel_x *= -1
         # 移動中的龜殼超出視窗左右5格時消失
-        if self.state == 'shell_moving':
-            left_boundary = camera_x - 5 * GRID_SIZE
-            right_boundary = camera_x + SCREEN_WIDTH + 5 * GRID_SIZE
+        # if self.state == 'shell_moving':
+        #     left_boundary = camera_x - 5 * GRID_SIZE
+        #     right_boundary = camera_x + SCREEN_WIDTH + 5 * GRID_SIZE
             
-            if self.rect.right < left_boundary or self.rect.left > right_boundary:
-                self.kill()
+        #     if self.rect.right < left_boundary or self.rect.left > right_boundary:
+        #         self.kill()
 
 class Pipe(pygame.sprite.Sprite):
     def __init__(self, grid_x, grid_y, grid_height):
@@ -2085,8 +2203,9 @@ class Checkpoint(pygame.sprite.Sprite):
 
 def respawn_player():
     """復活馬力歐並重置敵人和磚塊"""
-    global camera_x, respawn_timer, star_music_playing, game_sound_channel, is_fire_mario
+    global game_time, camera_x, respawn_timer, star_music_playing, game_sound_channel, is_fire_mario
     
+    game_time = 400
     # 復活馬力歐
     player.is_dead = False
     player.death_jump_done = False
@@ -2537,7 +2656,6 @@ while running:
                     game_over_sound.set_volume(0)
                     appear_sound.set_volume(0)
                     fireball_sound.set_volume(0)
-                    fireball_kick_sound.set_volume(0)
                     pipe_sound.set_volume(0)
                     
                 else:
@@ -2571,7 +2689,6 @@ while running:
                     game_over_sound.set_volume(1)
                     appear_sound.set_volume(1)
                     fireball_sound.set_volume(1)
-                    fireball_kick_sound.set_volume(1)
                     pipe_sound.set_volume(1)
             elif event.key == pygame.K_LCTRL or event.key == pygame.K_RCTRL:
                 if not game_over and not game_won and not game_paused:
@@ -2583,14 +2700,18 @@ while running:
                 
                 for fireball in list(fireballs):
                     fireball.kill()
+                
+                is_fire_mario = False
+                growing_timer = 0
+                transforming_timer = 0
+                shrinking_timer = 0
+                big_to_small_timer = 0
         
                 brick_init_data, enemy_init_data, platform_init_data, GRID_WIDTH, enemy_spawn_list = load_level(level_map)
                 game_over = False
                 game_won = False
                 camera_x = 0
                 player.min_x = 0
-                player.is_big = False
-                player.update_size()
                 points = 0
                 coins_collected = 0
                 game_time = 400
@@ -2607,7 +2728,6 @@ while running:
                 calculating_score = False
                 death_sound_playing = False
                 game_over_sound_played = False
-                is_fire_mario = False
                 
                 # 停止所有音效
                 if star_sound_channel:
@@ -2752,7 +2872,10 @@ while running:
                 if game_time == 100 and not hurry_sound_played and invincible_star_timer == 0:
                     if game_sound_channel:
                         game_sound_channel.pause()  # 暫停背景音樂
-                    hurry_sound_channel = hurry_sound.play()  # 播放一次緊急音效
+                    
+                    # 只有在非靜音狀態下才播放緊急音效
+                    if not game_muted:
+                        hurry_sound_channel = hurry_sound.play()  # 播放一次緊急音效
                     hurry_sound_played = True
                     # 設置一個計時器，等hurry_sound播放完後恢復game_sound
                     hurry_sound_end_timer = int(hurry_sound.get_length() * FPS)
@@ -2765,45 +2888,66 @@ while running:
             hurry_sound_end_timer -= 1
             if hurry_sound_end_timer == 0:
                 if invincible_star_timer == 0:  # 如果不在無敵狀態
-                    if game_sound_channel:
+                    if game_sound_channel and not game_muted:  # 檢查靜音狀態
                         game_sound_channel.unpause()  # 恢復背景音樂
         
         keys = pygame.key.get_pressed()
-        
-        if not player.walking_to_castle and growing_timer == 0:
-            if keys[pygame.K_LEFT]:
-                if player.vel_x > 0:
-                    player.vel_x -= player.deceleration * 2
-                    if player.vel_x < 0:
-                        player.vel_x = 0
-                else:
-                    player.vel_x -= player.acceleration
-                    if player.vel_x < -player.max_speed:
-                        player.vel_x = -player.max_speed
-                player.facing_right = False
-                
-            elif keys[pygame.K_RIGHT]:
-                if player.vel_x < 0:
-                    player.vel_x += player.deceleration * 2
-                    if player.vel_x > 0:
-                        player.vel_x = 0
-                else:
-                    player.vel_x += player.acceleration
-                    if player.vel_x > player.max_speed:
-                        player.vel_x = player.max_speed
-                player.facing_right = True
-                
-            else:
-                if player.vel_x > 0:
-                    player.vel_x -= player.deceleration
-                    if player.vel_x < 0:
-                        player.vel_x = 0
-                elif player.vel_x < 0:
-                    player.vel_x += player.deceleration
-                    if player.vel_x > 0:
-                        player.vel_x = 0
-        
+
         player.update()
+        
+        vel_x_after_update = player.vel_x
+        hit_wall_flag = player.hit_wall
+        
+        if not player.walking_to_castle and not player.on_flag and not player.waiting_for_flag and growing_timer == 0 and transforming_timer == 0 and shrinking_timer == 0 and big_to_small_timer == 0:
+            if keys[pygame.K_DOWN] and player.on_ground and (player.is_big or is_fire_mario):
+                player.is_crouching = True
+                player.vel_x = 0
+                player.hit_wall = False
+            else:
+                player.is_crouching = False
+            
+            if not player.is_crouching:
+                if keys[pygame.K_LEFT]:
+                    if hit_wall_flag and not player.facing_right and player.on_ground:
+                        player.vel_x = 0
+                    elif player.vel_x > 0:
+                        player.vel_x -= player.deceleration * 2
+                        if player.vel_x < 0:
+                            player.vel_x = 0
+                        player.hit_wall = False
+                    else:
+                        player.vel_x -= player.acceleration
+                        if player.vel_x < -player.max_speed:
+                            player.vel_x = -player.max_speed
+                        player.hit_wall = False
+                    player.facing_right = False
+                    
+                elif keys[pygame.K_RIGHT]:
+                    if hit_wall_flag and player.facing_right and player.on_ground:
+                        player.vel_x = 0
+                    elif player.vel_x < 0:
+                        player.vel_x += player.deceleration * 2
+                        if player.vel_x > 0:
+                            player.vel_x = 0
+                        player.hit_wall = False
+                    else:
+                        player.vel_x += player.acceleration
+                        if player.vel_x > player.max_speed:
+                            player.vel_x = player.max_speed
+                        player.hit_wall = False
+                    player.facing_right = True
+                
+                else:
+                    if player.vel_x > 0:
+                        player.vel_x -= player.deceleration
+                        if player.vel_x < 0:
+                            player.vel_x = 0
+                    elif player.vel_x < 0:
+                        player.vel_x += player.deceleration
+                        if player.vel_x > 0:
+                            player.vel_x = 0
+                    player.hit_wall = False
+        
         all_sprites.update()
         update_brick_particles()
         
@@ -2823,7 +2967,7 @@ while running:
                 star_music_playing = False
                 if star_sound_channel:
                     star_sound_channel.stop()
-                if game_sound_channel:
+                if game_sound_channel and not game_muted:
                     game_sound_channel.unpause()  # 恢復背景音樂
         
         # 更新分數彈出
@@ -2856,6 +3000,7 @@ while running:
         
         # 敵人碰撞檢測
         if not player.invincible and not player.is_dead and growing_timer == 0:
+            stomped_goombas = []
             for enemy in enemies:
                 if hasattr(enemy, 'is_squashed') and enemy.is_squashed:
                     continue
@@ -2863,80 +3008,7 @@ while running:
                     continue
                 
                 if enemy.rect.colliderect(player.rect):
-                    # 無敵星星狀態
-                    if invincible_star_timer > 0:
-                        if isinstance(enemy, Koopa):
-                            enemy.die_from_star()
-                        else:
-                            enemy.die_from_star()
-                        continue
-                    
-                    # 烏龜特殊處理
-                    if isinstance(enemy, Koopa):
-                        stomp_left = player.rect.left - GRID_SIZE
-                        stomp_right = player.rect.right + GRID_SIZE
-                        can_stomp = (player.vel_y >= 0 and 
-                                   player.rect.bottom - enemy.rect.top < 30 and
-                                   player.rect.bottom >= enemy.rect.top and
-                                   player.rect.top < enemy.rect.top and
-                                   stomp_right > enemy.rect.left and 
-                                   stomp_left < enemy.rect.right)
-                        
-                        if can_stomp and enemy.state == 'walking':
-                            enemy.stomp()
-                            player.vel_y = -10
-                            continue
-                        elif can_stomp and enemy.state == 'shell_moving':
-                            shell_center = enemy.rect.centerx
-                            player_center = player.rect.centerx
-                            offset = abs(player_center - shell_center)
-                            
-                            if offset < GRID_SIZE // 4:
-                                enemy.state = 'shell'
-                                enemy.vel_x = 0
-                                player.vel_y = 0
-                            else:
-                                enemy.state = 'shell'
-                                enemy.vel_x = 0
-                                player.vel_y = -10
-                            continue
-                        elif can_stomp and enemy.state == 'shell':
-                            shell_center = enemy.rect.centerx
-                            player_center = player.rect.centerx
-                            offset = abs(player_center - shell_center)
-
-                            if player_center < shell_center:
-                                enemy.kick(True)
-                                player.vel_y = -10
-                            else:
-                                enemy.kick(False)
-                                player.vel_y = -10
-                            continue
-                        elif enemy.state == 'shell' and enemy.vel_x == 0:
-                            from_left = player.rect.centerx < enemy.rect.centerx
-                            enemy.kick(from_left)
-                            continue
-                        elif enemy.state == 'shell_moving':
-                            if player.rect.centerx < enemy.rect.centerx:
-                                if enemy.vel_x > 0 and player.vel_x > 0:
-                                    continue
-                            else:
-                                if enemy.vel_x < 0 and player.vel_x < 0:
-                                    continue
-                            
-                            if player.is_big:
-                                player.shrink()
-                            else:
-                                player.die()
-                            break
-                        elif enemy.state == 'walking':
-                            if player.is_big:
-                                player.shrink()
-                            else:
-                                player.die()
-                            break
-                    # Goomba處理
-                    elif hasattr(enemy, 'squash'):
+                    if isinstance(enemy, Enemy):
                         stomp_left = player.rect.left - GRID_SIZE
                         stomp_right = player.rect.right + GRID_SIZE
                         can_stomp = (player.vel_y >= 0 and 
@@ -2947,15 +3019,137 @@ while running:
                                    stomp_left < enemy.rect.right)
                         
                         if can_stomp:
-                            enemy.squash()
-                            player.vel_y = -10
-                            continue
-                        else:
-                            if player.is_big:
-                                player.shrink()
+                            stomped_goombas.append(enemy)
+            
+            double_stomp_success = False
+            if len(stomped_goombas) == 2:
+                goomba1, goomba2 = stomped_goombas[0], stomped_goombas[1]
+                distance = abs(goomba1.rect.centerx - goomba2.rect.centerx)
+                
+                if distance <= GRID_SIZE * 2:
+                    for goomba in stomped_goombas:
+                        goomba.is_squashed = True
+                        goomba.squash_timer = 30
+                        goomba.vel_x = 0
+                        goomba.vel_y = 0
+                        old_bottom = goomba.rect.bottom
+                        old_x = goomba.rect.x
+                        goomba.image = GOOMBA[1]
+                        goomba.image = pygame.transform.scale(goomba.image, (GRID_SIZE, GRID_SIZE//3))
+                        goomba.rect = goomba.image.get_rect()
+                        goomba.rect.bottom = old_bottom
+                        goomba.rect.x = old_x
+                    
+                    points += 10000
+                    mid_x = (goomba1.rect.x + goomba2.rect.x) // 2
+                    mid_y = min(goomba1.rect.y, goomba2.rect.y)
+                    add_score_popup(mid_x, mid_y, 10000)
+                    
+                    player.vel_y = -10
+                    kick_sound.play()
+                    
+                    double_stomp_success = True
+            
+            if not double_stomp_success:
+                for enemy in enemies:
+                    if hasattr(enemy, 'is_squashed') and enemy.is_squashed:
+                        continue
+                    if hasattr(enemy, 'is_dying') and enemy.is_dying:
+                        continue
+                    
+                    if enemy.rect.colliderect(player.rect):
+                        if invincible_star_timer > 0:
+                            if isinstance(enemy, Koopa):
+                                enemy.die_from_star()
                             else:
-                                player.die()
-                            break
+                                enemy.die_from_star()
+                            continue
+                        
+                        # 烏龜特殊處理
+                        if isinstance(enemy, Koopa):
+                            stomp_left = player.rect.left - GRID_SIZE
+                            stomp_right = player.rect.right + GRID_SIZE
+                            can_stomp = (player.vel_y >= 0 and 
+                                       player.rect.bottom - enemy.rect.top < 30 and
+                                       player.rect.bottom >= enemy.rect.top and
+                                       player.rect.top < enemy.rect.top and
+                                       stomp_right > enemy.rect.left and 
+                                       stomp_left < enemy.rect.right)
+                            
+                            if can_stomp and enemy.state == 'walking':
+                                enemy.stomp()
+                                player.vel_y = -10
+                                continue
+                            elif can_stomp and enemy.state == 'shell_moving':
+                                shell_center = enemy.rect.centerx
+                                player_center = player.rect.centerx
+                                offset = abs(player_center - shell_center)
+                                
+                                if offset < GRID_SIZE // 4:
+                                    enemy.state = 'shell'
+                                    enemy.vel_x = 0
+                                    player.vel_y = 0
+                                else:
+                                    enemy.state = 'shell'
+                                    enemy.vel_x = 0
+                                    player.vel_y = -10
+                                continue
+                            elif can_stomp and enemy.state == 'shell':
+                                shell_center = enemy.rect.centerx
+                                player_center = player.rect.centerx
+                                offset = abs(player_center - shell_center)
+    
+                                if player_center < shell_center:
+                                    enemy.kick(True)
+                                    player.vel_y = -10
+                                else:
+                                    enemy.kick(False)
+                                    player.vel_y = -10
+                                continue
+                            elif enemy.state == 'shell' and enemy.vel_x == 0:
+                                from_left = player.rect.centerx < enemy.rect.centerx
+                                enemy.kick(from_left)
+                                continue
+                            elif enemy.state == 'shell_moving':
+                                if player.rect.centerx < enemy.rect.centerx:
+                                    if enemy.vel_x > 0 and player.vel_x > 0:
+                                        continue
+                                else:
+                                    if enemy.vel_x < 0 and player.vel_x < 0:
+                                        continue
+                                
+                                if player.is_big:
+                                    player.shrink()
+                                else:
+                                    player.die()
+                                break
+                            elif enemy.state == 'walking':
+                                if player.is_big:
+                                    player.shrink()
+                                else:
+                                    player.die()
+                                break
+                        # Goomba處理
+                        elif hasattr(enemy, 'squash'):
+                            stomp_left = player.rect.left - GRID_SIZE
+                            stomp_right = player.rect.right + GRID_SIZE
+                            can_stomp = (player.vel_y >= 0 and 
+                                       player.rect.bottom - enemy.rect.top < 30 and
+                                       player.rect.bottom >= enemy.rect.top and
+                                       player.rect.top < enemy.rect.top and
+                                       stomp_right > enemy.rect.left and 
+                                       stomp_left < enemy.rect.right)
+                            
+                            if can_stomp:
+                                enemy.squash()
+                                player.vel_y = -10
+                                continue
+                            else:
+                                if player.is_big:
+                                    player.shrink()
+                                else:
+                                    player.die()
+                                break
                             
     screen.fill(SKY_BLUE)
 
