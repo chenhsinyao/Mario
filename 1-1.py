@@ -701,44 +701,52 @@ class Player(pygame.sprite.Sprite):
                 if self.vel_x > 0:
                     self.rect.right = stair.rect.left
                     self.vel_x = 0
-                    self.hit_wall = True
+                    if self.facing_right:
+                        self.hit_wall = True
                 elif self.vel_x < 0:
                     self.rect.left = stair.rect.right
                     self.vel_x = 0
-                    self.hit_wall = True
+                    if not self.facing_right:
+                        self.hit_wall = True
         
         for platform in platforms:
             if self.rect.colliderect(platform.rect):
                 if self.vel_x > 0:
                     self.rect.right = platform.rect.left
                     self.vel_x = 0
-                    self.hit_wall = True
+                    if self.facing_right:
+                        self.hit_wall = True
                 elif self.vel_x < 0:
                     self.rect.left = platform.rect.right
                     self.vel_x = 0
-                    self.hit_wall = True
+                    if not self.facing_right:
+                        self.hit_wall = True
                     
         for pipe in pipes:
             if self.rect.colliderect(pipe.rect):
                 if self.vel_x > 0:
                     self.rect.right = pipe.rect.left
                     self.vel_x = 0
-                    self.hit_wall = True
+                    if self.facing_right:
+                        self.hit_wall = True
                 elif self.vel_x < 0:
                     self.rect.left = pipe.rect.right
                     self.vel_x = 0
-                    self.hit_wall = True
+                    if not self.facing_right:
+                        self.hit_wall = True
                     
         for pipe_top in pipe_tops:
             if self.rect.colliderect(pipe_top.rect):
                 if self.vel_x > 0:
                     self.rect.right = pipe_top.rect.left
                     self.vel_x = 0
-                    self.hit_wall = True
+                    if self.facing_right:
+                        self.hit_wall = True
                 elif self.vel_x < 0:
                     self.rect.left = pipe_top.rect.right
                     self.vel_x = 0
-                    self.hit_wall = True
+                    if not self.facing_right:
+                        self.hit_wall = True
         
         self.rect.y += self.vel_y
         
@@ -906,7 +914,8 @@ class Player(pygame.sprite.Sprite):
             self.rect.left = self.min_x
             if self.vel_x < 0:
                 self.vel_x = 0
-                self.hit_wall = True
+                if not self.facing_right:
+                    self.hit_wall = True
         
         self.update_image_direction()
         
@@ -2954,8 +2963,10 @@ while running:
             
             if not player.is_crouching:
                 if keys[pygame.K_LEFT]:
-                    if hit_wall_flag and not player.facing_right and player.on_ground:
+                    if hit_wall_flag and not player.facing_right and player.on_ground and player.vel_x == 0:
                         player.vel_x = 0
+                    elif hit_wall_flag and player.facing_right and player.on_ground and player.vel_x == 0:
+                        player.hit_wall = False
                     elif player.vel_x > 0:
                         player.vel_x -= player.deceleration * 2
                         if player.vel_x < 0:
@@ -2969,8 +2980,10 @@ while running:
                     player.facing_right = False
                     
                 elif keys[pygame.K_RIGHT]:
-                    if hit_wall_flag and player.facing_right and player.on_ground:
+                    if hit_wall_flag and player.facing_right and player.on_ground and player.vel_x == 0:
                         player.vel_x = 0
+                    elif hit_wall_flag and not player.facing_right and player.on_ground and player.vel_x == 0:
+                        player.hit_wall = False
                     elif player.vel_x < 0:
                         player.vel_x += player.deceleration * 2
                         if player.vel_x > 0:
@@ -2984,6 +2997,7 @@ while running:
                     player.facing_right = True
                 
                 else:
+                    player.hit_wall = False
                     if player.vel_x > 0:
                         player.vel_x -= player.deceleration
                         if player.vel_x < 0:
@@ -2992,7 +3006,6 @@ while running:
                         player.vel_x += player.deceleration
                         if player.vel_x > 0:
                             player.vel_x = 0
-                    player.hit_wall = False
         
         all_sprites.update()
         update_brick_particles()
