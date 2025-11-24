@@ -152,7 +152,7 @@ initial_player_y = 0
 invincible_star_timer = 0
 growing_timer = 0 # 小馬力歐變大馬力歐計時器
 transforming_timer = 0  # 大馬力歐變火焰馬力歐計時器
-shrinking_timer = 0  # 火焰馬力歐變小馬力歐計時器
+fire_to_big_timer = 0  # 火焰馬力歐變大馬力歐計時器
 big_to_small_timer = 0  # 大馬力歐變小馬力歐計時器
 score_popups = []
 respawn_timer = 0
@@ -172,6 +172,7 @@ hurry_sound_end_timer = 0  # 時間緊急音效結束計時器
 game_sound_channel = None  # 背景音樂頻道
 hurry_sound_channel = None  # 緊急音效頻道
 star_sound_channel = None  # 星星音樂頻道
+show_hitboxes = False
 
 # 關卡地圖
 level_map = [
@@ -394,9 +395,9 @@ class Player(pygame.sprite.Sprite):
                 self.update_image_direction()
     
     def shrink(self):
-        global is_fire_mario, shrinking_timer, big_to_small_timer
+        global is_fire_mario, big_to_small_timer, fire_to_big_timer
         if is_fire_mario:
-            shrinking_timer = FPS
+            fire_to_big_timer = FPS
             self.invincible = True
             self.invincible_timer = 120
             pipe_sound.play()
@@ -424,7 +425,7 @@ class Player(pygame.sprite.Sprite):
         self.shooting_timer = FPS // 4  # 顯示射擊圖片15幀
 
     def update(self):
-        global game_won, game_over, reset_timer, growing_timer, transforming_timer, shrinking_timer, big_to_small_timer, camera_x, checkpoint_x, checkpoint_activated, initial_player_x, initial_player_y, live, respawn_timer, calculating_score, score_calculation_timer, target_points, start_points, start_coins, start_time, points, death_sound_playing, death_sound_timer, death_sound, game_sound_channel, star_sound_channel, hurry_sound_channel, is_fire_mario
+        global game_won, game_over, reset_timer, growing_timer, transforming_timer, fire_to_big_timer, big_to_small_timer, camera_x, checkpoint_x, checkpoint_activated, initial_player_x, initial_player_y, live, respawn_timer, calculating_score, score_calculation_timer, target_points, start_points, start_coins, start_time, points, death_sound_playing, death_sound_timer, death_sound, game_sound_channel, star_sound_channel, hurry_sound_channel, is_fire_mario
         
         # 遞減射擊計時器
         if self.shooting_timer > 0:
@@ -457,22 +458,17 @@ class Player(pygame.sprite.Sprite):
                 self.update_image_direction()
             return False
         
-        # 縮小特效 (火焰馬力歐變小馬力歐)
-        if shrinking_timer > 0:
-            shrinking_timer -= 1
-            if shrinking_timer % 10 == 0:
-                # 切換顯示火焰馬力歐和小馬力歐
-                if is_fire_mario:
-                    is_fire_mario = False
-                    self.is_big = False
-                else:
-                    is_fire_mario = True
-                    self.is_big = False
+        # 變身特效 (火焰馬力歐變大馬力歐)
+        if fire_to_big_timer > 0:
+            fire_to_big_timer -= 1
+            if fire_to_big_timer % 10 == 0:
+                # 切換顯示火焰馬力歐和大馬力歐
+                is_fire_mario = not is_fire_mario
                 self.update_size()
                 self.update_image_direction()
-            if shrinking_timer == 0:
+            if fire_to_big_timer == 0:
                 is_fire_mario = False
-                self.is_big = False
+                self.is_big = True
                 self.update_size()
                 self.update_image_direction()
             return False
@@ -721,6 +717,28 @@ class Player(pygame.sprite.Sprite):
                     self.rect.left = platform.rect.right
                     self.vel_x = 0
                     self.hit_wall = True
+                    
+        for pipe in pipes:
+            if self.rect.colliderect(pipe.rect):
+                if self.vel_x > 0:
+                    self.rect.right = pipe.rect.left
+                    self.vel_x = 0
+                    self.hit_wall = True
+                elif self.vel_x < 0:
+                    self.rect.left = pipe.rect.right
+                    self.vel_x = 0
+                    self.hit_wall = True
+                    
+        for pipe_top in pipe_tops:
+            if self.rect.colliderect(pipe_top.rect):
+                if self.vel_x > 0:
+                    self.rect.right = pipe_top.rect.left
+                    self.vel_x = 0
+                    self.hit_wall = True
+                elif self.vel_x < 0:
+                    self.rect.left = pipe_top.rect.right
+                    self.vel_x = 0
+                    self.hit_wall = True
         
         self.rect.y += self.vel_y
         
@@ -745,6 +763,28 @@ class Player(pygame.sprite.Sprite):
                     self.on_ground = True
                 elif self.vel_y < 0:
                     self.rect.top = stair.rect.bottom
+                    self.vel_y = 0
+
+        for pipe in pipes:
+            if self.rect.colliderect(pipe.rect):
+                if self.vel_y > 0:
+                    self.rect.bottom = pipe.rect.top
+                    self.vel_y = 0
+                    self.jumping = False
+                    self.on_ground = True
+                elif self.vel_y < 0:
+                    self.rect.top = pipe.rect.bottom
+                    self.vel_y = 0
+
+        for pipe_top in pipe_tops:
+            if self.rect.colliderect(pipe_top.rect):
+                if self.vel_y > 0:
+                    self.rect.bottom = pipe_top.rect.top
+                    self.vel_y = 0
+                    self.jumping = False
+                    self.on_ground = True
+                elif self.vel_y < 0:
+                    self.rect.top = pipe_top.rect.bottom
                     self.vel_y = 0
                     
         for brick in bricks:
@@ -810,33 +850,33 @@ class Player(pygame.sprite.Sprite):
                     self.vel_y = 0
                     qblock.hit()
                     
-        for pipe in pipes:
-            if self.rect.colliderect(pipe.rect):
-                if self.vel_y > 0 and self.rect.bottom - pipe.rect.top < 20:
-                    self.rect.bottom = pipe.rect.top
-                    self.vel_y = 0
-                    self.jumping = False
-                    self.on_ground = True
-                elif self.vel_x > 0 and self.rect.right - pipe.rect.left < 20:
-                    self.rect.right = pipe.rect.left
-                    self.vel_x = 0
-                    self.hit_wall = True
-                elif self.vel_x < 0 and pipe.rect.right - self.rect.left < 20:
-                    self.rect.left = pipe.rect.right
-                    self.vel_x = 0
-                    self.hit_wall = True
+        # for pipe in pipes:
+        #     if self.rect.colliderect(pipe.rect):
+        #         if self.vel_y > 0 and self.rect.bottom - pipe.rect.top < 20:
+        #             self.rect.bottom = pipe.rect.top
+        #             self.vel_y = 0
+        #             self.jumping = False
+        #             self.on_ground = True
+        #         elif self.vel_x > 0 and self.rect.right - pipe.rect.left < 20:
+        #             self.rect.right = pipe.rect.left
+        #             self.vel_x = 0
+        #             self.hit_wall = True
+        #         elif self.vel_x < 0 and pipe.rect.right - self.rect.left < 20:
+        #             self.rect.left = pipe.rect.right
+        #             self.vel_x = 0
+        #             self.hit_wall = True
         
-        for pipe_top in pipe_tops:
-            if self.rect.colliderect(pipe_top.rect):
-                if self.vel_y > 0 and self.rect.bottom - pipe_top.rect.top < 20:
-                    self.rect.bottom = pipe_top.rect.top
-                    self.vel_y = 0
-                    self.jumping = False
-                    self.on_ground = True
-                elif self.vel_x > 0 and self.rect.right - pipe_top.rect.left < 20:
-                    self.rect.right = pipe_top.rect.left
-                elif self.vel_x < 0 and pipe_top.rect.right - self.rect.left < 20:
-                    self.rect.left = pipe_top.rect.right
+        # for pipe_top in pipe_tops:
+        #     if self.rect.colliderect(pipe_top.rect):
+        #         if self.vel_y > 0 and self.rect.bottom - pipe_top.rect.top < 20:
+        #             self.rect.bottom = pipe_top.rect.top
+        #             self.vel_y = 0
+        #             self.jumping = False
+        #             self.on_ground = True
+        #         elif self.vel_x > 0 and self.rect.right - pipe_top.rect.left < 20:
+        #             self.rect.right = pipe_top.rect.left
+        #         elif self.vel_x < 0 and pipe_top.rect.right - self.rect.left < 20:
+        #             self.rect.left = pipe_top.rect.right
         
         for flagpole in flagpoles:
             if self.rect.colliderect(flagpole.rect):
@@ -1610,7 +1650,7 @@ class Star(pygame.sprite.Sprite):
         self.rising = True
         self.rise_timer = FPS
         self.start_y = y
-        self.bounce_power = -12
+        self.bounce_power = -11
         self.z_order = -1  # 上升時在磚塊後面
         
     def update(self):
@@ -2203,7 +2243,7 @@ class Checkpoint(pygame.sprite.Sprite):
 
 def respawn_player():
     """復活馬力歐並重置敵人和磚塊"""
-    global game_time, camera_x, respawn_timer, star_music_playing, game_sound_channel, is_fire_mario
+    global game_time, camera_x, respawn_timer, star_music_playing, game_sound_channel, is_fire_mario, growing_timer, transforming_timer, fire_to_big_timer, big_to_small_timer
     
     game_time = 400
     # 復活馬力歐
@@ -2509,8 +2549,12 @@ def draw_hud():
     screen.blit(live_count_text, (690, 50))
     
     small_font = pygame.font.Font(FONT, 8)
-    controls_text = small_font.render("Arrow Keys: Move | Space/Up: Jump | P: Pause | M: Mute | R: Restart", True, WHITE)
-    screen.blit(controls_text, (10, SCREEN_HEIGHT - 30))
+    controls_text1 = small_font.render("Arrow Keys: Move | Space/Up: Jump | P: Pause | M: Mute", True, WHITE)
+    screen.blit(controls_text1, (10, SCREEN_HEIGHT - 60))
+    
+    small_font = pygame.font.Font(FONT, 8)
+    controls_text2 = small_font.render("R: Restart | Ctrl: Shooting | B: Show boxes", True, WHITE)
+    screen.blit(controls_text2, (10, SCREEN_HEIGHT - 30))
 
 def draw_win_screen():
     overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -2525,7 +2569,7 @@ def draw_win_screen():
     win_rect = win_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3))
     screen.blit(win_text, win_rect)
     
-    score_text = font_medium.render(f"Final Score: {points:06d}", True, WHITE)
+    score_text = font_medium.render(f"Final Score: {points:d}", True, WHITE)
     score_rect = score_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
     screen.blit(score_text, score_rect)
     
@@ -2546,7 +2590,7 @@ def draw_game_over_screen():
     game_over_rect = game_over_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3))
     screen.blit(game_over_text, game_over_rect)
     
-    score_text = font_medium.render(f"Final Score: {points:06d}", True, WHITE)
+    score_text = font_medium.render(f"Final Score: {points:d}", True, WHITE)
     score_rect = score_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
     screen.blit(score_text, score_rect)
     
@@ -2704,7 +2748,7 @@ while running:
                 is_fire_mario = False
                 growing_timer = 0
                 transforming_timer = 0
-                shrinking_timer = 0
+                fire_to_big_timer = 0
                 big_to_small_timer = 0
         
                 brick_init_data, enemy_init_data, platform_init_data, GRID_WIDTH, enemy_spawn_list = load_level(level_map)
@@ -2748,6 +2792,8 @@ while running:
                     game_sound_channel = game_sound.play(-1)
                     game_sound_channel.pause()  # 立即暫停
                 current_music = 'normal'
+            elif event.key == pygame.K_b:
+                show_hitboxes = not show_hitboxes
     
     if game_over:
         # 顯示 Game Over 畫面
@@ -2898,7 +2944,7 @@ while running:
         vel_x_after_update = player.vel_x
         hit_wall_flag = player.hit_wall
         
-        if not player.walking_to_castle and not player.on_flag and not player.waiting_for_flag and growing_timer == 0 and transforming_timer == 0 and shrinking_timer == 0 and big_to_small_timer == 0:
+        if not player.walking_to_castle and not player.on_flag and not player.waiting_for_flag and growing_timer == 0 and transforming_timer == 0 and fire_to_big_timer == 0 and big_to_small_timer == 0:
             if keys[pygame.K_DOWN] and player.on_ground and (player.is_big or is_fire_mario):
                 player.is_crouching = True
                 player.vel_x = 0
@@ -3168,7 +3214,14 @@ while running:
             if isinstance(sprite, SecretBrick) and not sprite.is_visible:
                 continue
             screen.blit(sprite.image, (sprite.rect.x - camera_x, sprite.rect.y))
-    
+            
+    if show_hitboxes:
+        for sprite in all_sprites:
+            if sprite not in clouds:
+                screen.blit(sprite.image, (sprite.rect.x - camera_x, sprite.rect.y))
+                debug_rect = pygame.Rect(sprite.rect.x - camera_x, sprite.rect.y, sprite.rect.width, sprite.rect.height)
+                pygame.draw.rect(screen, RED, debug_rect, 2)
+        
     # 繪製磚塊破碎粒子
     draw_brick_particles(screen, camera_x)
     
